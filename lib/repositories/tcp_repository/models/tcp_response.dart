@@ -7,7 +7,7 @@
 
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/common_models/userinfo.dart';
-import 'package:tcp_client/repositories/file_repository/models/local_file.dart';
+import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 
 enum TCPResponseType {
   token         ('TOKEN'),          //Only exists when server is sending message

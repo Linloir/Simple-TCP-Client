@@ -10,7 +10,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tcp_client/repositories/common_models/json_encodable.dart';
-import 'package:tcp_client/repositories/file_repository/models/local_file.dart';
+import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 
 enum MessageType {
   plaintext('plaintext'),

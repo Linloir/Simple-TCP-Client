@@ -1,17 +1,18 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:44:03
- * @LastEditTime : 2022-10-11 16:01:54
+ * @LastEditTime : 2022-10-11 16:55:08
  * @Description  : Abstract TCP request class
  */
 
 export 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/common_models/useridentity.dart';
 import 'package:tcp_client/repositories/common_models/userinfo.dart';
-import 'package:tcp_client/repositories/file_repository/models/local_file.dart';
+import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 
 enum TCPRequestType {
   checkState    ('STATE'),          //Check login state for device token
@@ -57,6 +58,14 @@ abstract class TCPRequest {
       'body': body,
       'token': token
     });
+  }
+  
+  Stream<List<int>> get stream async* {
+    var jsonString = toJSON();
+    var requestLength = jsonString.length;
+    yield Uint8List(4)..buffer.asInt32List()[0] = requestLength;
+    yield Uint8List(4)..buffer.asInt32List()[0] = 0;
+    yield Uint8List.fromList(jsonString.codeUnits);
   }
 }
 
@@ -143,6 +152,21 @@ class SendMessageRequest extends TCPRequest {
   Map<String, Object?> get body => _message.jsonObject;
 
   Message get message => _message;
+
+  @override
+  Stream<List<int>> get stream async* {
+    var jsonString = toJSON();
+    var requestLength = jsonString.length;
+    yield Uint8List(4)..buffer.asInt32List()[0] = requestLength;
+    yield Uint8List(4)..buffer.asInt32List()[0] = 0;
+    yield Uint8List.fromList(jsonString.codeUnits);
+    if(_message.payload != null) {
+      var fileStream = _message.payload!.file.openRead();
+      await for(var bytes in fileStream) {
+        yield bytes;
+      }
+    }
+  }
 }
 
 class FetchMessageRequest extends TCPRequest {

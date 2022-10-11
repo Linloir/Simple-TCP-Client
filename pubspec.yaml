@@ -32,6 +32,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  path_provider: ^2.0.11
   sqflite_common_ffi: ^2.1.1+1
   sqflite_common: ^2.3.0
   crypto: ^3.0.2
@@ -40,6 +41,11 @@ dependencies:
   formz: ^0.4.1
   bloc: ^8.1.0
   flutter_bloc: ^8.1.1
+  file_picker: ^5.2.1
+  open_file:
+    git:
+      url: https://github.com/crazecoder/open_file
+  shared_preferences: ^2.0.15
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

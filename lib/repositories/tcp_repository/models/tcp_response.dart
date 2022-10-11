@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:02:19
- * @LastEditTime : 2022-10-11 16:00:53
+ * @LastEditTime : 2022-10-11 22:55:48
  * @Description  : 
  */
 
@@ -195,12 +195,18 @@ class FindFileResponse extends TCPResponse {
 }
 
 class FetchFileResponse extends TCPResponse {
-  final LocalFile _payload;
+  late final LocalFile _payload;
 
   FetchFileResponse({
     required Map<String, Object?> jsonObject,
     required LocalFile payload
-  }): _payload = payload, super(jsonObject: jsonObject);
+  }): super(jsonObject: jsonObject) {
+    _payload = LocalFile(
+      file: payload.file, 
+      filemd5: payload.filemd5, 
+      ext: (jsonObject['body'] as Map<String, Object?>)['ext'] as String
+    );
+  }
 
   LocalFile get payload => _payload;
 }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-11 17:41:11
+ * @LastEditTime : 2022-10-11 22:55:28
  * @Description  : TCP repository
  */
 
@@ -11,12 +11,17 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_response.dart';
 
 class TCPRepository {
-  TCPRepository(this._socket) {
+  TCPRepository({
+    required Socket socket,
+    required String remoteAddress,
+    required int remotePort
+  }): _socket = socket, _remoteAddress = remoteAddress, _remotePort = remotePort {
     _socket.listen(_pullResponse);
     //This future never ends, would that be bothersome?
     Future(() async {
@@ -33,6 +38,8 @@ class TCPRepository {
   }
 
   final Socket _socket;
+  final String _remoteAddress;
+  final int _remotePort;
 
   //Stores the incoming bytes of the TCP connection temporarily
   final List<int> buffer = [];
@@ -50,7 +57,12 @@ class TCPRepository {
 
   //Provide a response stream for blocs to listen on
   final StreamController<TCPResponse> _responseStreamController = StreamController();
+  Stream<TCPResponse>? _responseStreamBroadcast;
   Stream<TCPResponse> get responseStream => _responseStreamController.stream;
+  Stream<TCPResponse> get responseStreamBroadcast {
+    _responseStreamBroadcast ??= _responseStreamController.stream.asBroadcastStream();
+    return _responseStreamBroadcast!;
+  }
 
   //Provide a request stream for widgets to push to
   final StreamController<TCPRequest> _requestStreamController = StreamController();
@@ -213,7 +225,8 @@ class TCPRepository {
           jsonObject: responseObject,
           payload: LocalFile(
             file: tempFile,
-            filemd5: md5.convert(await tempFile.readAsBytes()).toString()
+            filemd5: md5.convert(await tempFile.readAsBytes()).toString(),
+            ext: ""
           )
         ));
         break;
@@ -238,5 +251,38 @@ class TCPRepository {
         break;
       }
     }
+  }
+
+  Future<bool> checkFileExistence({
+    required LocalFile file
+  }) async {
+    //Duplicate current socket
+    Socket socket = await Socket.connect(_remoteAddress, _remotePort);
+    TCPRepository duplicatedRepository = TCPRepository(
+      socket: socket, 
+      remoteAddress: _remoteAddress, 
+      remotePort: _remotePort
+    );
+    var pref = await SharedPreferences.getInstance();
+    var request = FindFileRequest(file: file, token: pref.getInt('token')!);
+    duplicatedRepository.pushRequest(request);
+    var hasFile = false;
+    await for(var response in duplicatedRepository.responseStream) {
+      if(response.type == TCPResponseType.findFile) {
+        hasFile = response.status == TCPResponseStatus.ok;
+        break;
+      }
+    }
+    duplicatedRepository.dispose();
+    return hasFile;
+  }
+
+  void dispose() {
+    _responseRawStreamController.close();
+    _payloadPullStreamController.close();
+    _payloadRawStreamController.close();
+    _responseStreamController.close();
+    _requestStreamController.close();
+    _socket.close();
   }
 }

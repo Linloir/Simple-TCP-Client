@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:30:05
- * @LastEditTime : 2022-10-11 15:36:23
+ * @LastEditTime : 2022-10-11 23:35:45
  * @Description  : 
  */
 
@@ -32,6 +32,7 @@ class Message extends JSONEncodable {
   final String _content;
   final int _timestamp;
   late final String _contentmd5;
+  late final String? _filemd5;
   final LocalFile? _payload;
 
   Message({
@@ -54,6 +55,7 @@ class Message extends JSONEncodable {
       ..addAll(Uint8List(4)..buffer.asInt32List()[0] = targetid)
       ..addAll(Uint8List(4)..buffer.asInt32List()[0] = _timestamp)
     ).toString();
+    _filemd5 = _payload?.filemd5;
   }
 
   Message.fromJSONObject({
@@ -66,6 +68,7 @@ class Message extends JSONEncodable {
     _content = jsonObject['content'] as String,
     _timestamp = jsonObject['timestamp'] as int,
     _contentmd5 = jsonObject['md5encoded'] as String,
+    _filemd5 = jsonObject['filemd5'] as String,
     _payload = payload;
 
   int get senderID => _userid;
@@ -75,6 +78,7 @@ class Message extends JSONEncodable {
   String get contentEncoded => _content;
   String get contentmd5 => _contentmd5;
   int get timeStamp => _timestamp;
+  String? get filemd5 => _filemd5;
   LocalFile? get payload => _payload;
 
   @override

@@ -1,16 +1,16 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:44:03
- * @LastEditTime : 2022-10-11 11:37:13
+ * @LastEditTime : 2022-10-11 16:01:54
  * @Description  : Abstract TCP request class
  */
 
-export 'package:tcp_client/repositories/online_service_repository/models/tcp_request.dart';
+export 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
-import 'package:tcp_client/repositories/common_models/message_type.dart';
+import 'package:tcp_client/repositories/common_models/message.dart';
+import 'package:tcp_client/repositories/common_models/useridentity.dart';
+import 'package:tcp_client/repositories/common_models/userinfo.dart';
 import 'package:tcp_client/repositories/file_repository/models/local_file.dart';
 
 enum TCPRequestType {
@@ -68,43 +68,27 @@ class CheckStateRequest extends TCPRequest {
 }
 
 class RegisterRequest extends TCPRequest {
-  final String _username;
-  final String _password;
+  final UserIdentity _identity;
   
   RegisterRequest({
-    required username, 
-    required password, 
+    required UserIdentity identity,
     required token
-  }): 
-    _username = username,
-    _password = md5.convert(password.codeUnits).toString(),
-    super(type: TCPRequestType.register, token: token);
+  }): _identity = identity, super(type: TCPRequestType.register, token: token);
 
   @override
-  Map<String, Object?> get body => {
-    'username': _username,
-    'passwd': _password
-  };
+  Map<String, Object?> get body => _identity.jsonObject;
 }
 
 class LoginRequest extends TCPRequest {
-  final String _username;
-  final String _password;
-
-  LoginRequest({
-    required String username,
-    required String password,
-    required int token
-  }):
-    _username = username,
-    _password = md5.convert(password.codeUnits).toString(),
-    super(type: TCPRequestType.login, token: token);
+  final UserIdentity _identity;
   
+  LoginRequest({
+    required UserIdentity identity,
+    required token
+  }): _identity = identity, super(type: TCPRequestType.login, token: token);
+
   @override
-  Map<String, Object?> get body => {
-    'username': _username,
-    'passwd': _password
-  };
+  Map<String, Object?> get body => _identity.jsonObject;
 }
 
 class LogoutRequest extends TCPRequest {
@@ -122,97 +106,43 @@ class GetProfileRequest extends TCPRequest {
 }
 
 class ModifyPasswordRequest extends TCPRequest {
-  final String _username;
-  final String _oldPassword;
-  final String _newPassword;
-
+  final UserIdentity _identity;
+  
   ModifyPasswordRequest({
-    required String username,
-    required String oldPassword,
-    required String newPassowrd,
-    required int token
-  }):
-    _username = username,
-    _oldPassword = md5.convert(oldPassword.codeUnits).toString(),
-    _newPassword = md5.convert(newPassowrd.codeUnits).toString(),
-    super(type: TCPRequestType.modifyPassword, token: token);
+    required UserIdentity identity,
+    required token
+  }): _identity = identity, super(type: TCPRequestType.modifyPassword, token: token);
 
   @override
-  Map<String, Object?> get body => {
-    'username': _username,
-    'passwd': _oldPassword,
-    'newPasswd': _newPassword
-  };
+  Map<String, Object?> get body => _identity.jsonObject;
 }
 
 class ModifyProfileRequest extends TCPRequest {
-  final int _userid;
-  final String _username;
-  final String _avatar;
+  final UserInfo _userinfo;
 
   const ModifyProfileRequest ({
-    required int userid,        //Note: This can be fetched from local_service_repository
-    required String username,
-    required String avatar,
+    required UserInfo userInfo,
     required int token
-  }):
-    _userid = userid,
-    _username = username,
-    _avatar = avatar,
-    super(type: TCPRequestType.modifyProfile, token: token);
+  }): _userinfo = userInfo, super(type: TCPRequestType.modifyProfile, token: token);
 
   @override
-  Map<String, Object?> get body => {
-    'userid': _userid,
-    'username': _username,
-    'avatar': _avatar
-  };
+  Map<String, Object?> get body => _userinfo.jsonObject;
 }
 
 class SendMessageRequest extends TCPRequest {
-  final int _userid;
-  final int _targetid;
-  final MessageType _contenttype;
-  final String _content;
-  final int _timestamp;
-  late final String _contentmd5;
-  final LocalFile? _payload;
+  final Message _message;
 
   SendMessageRequest({
-    required int userid,
-    required int targetid,
-    required MessageType contenttype,
-    required String content,
-    LocalFile? payload,
+    required Message message,
     required int token
   }):
-   _userid = userid,
-   _targetid = targetid,
-   _contenttype = contenttype,
-   _content = base64.encode(utf8.encode(content)),
-   _timestamp = DateTime.now().millisecondsSinceEpoch,
-   _payload = payload,
-   super(type: TCPRequestType.sendMessage, token: token) {
-    _contentmd5 = md5.convert(
-      utf8.encode(content)
-      ..addAll(Uint8List(4)..buffer.asInt32List()[0] = userid)
-      ..addAll(Uint8List(4)..buffer.asInt32List()[0] = targetid)
-      ..addAll(Uint8List(4)..buffer.asInt32List()[0] = _timestamp)
-    ).toString();
-   }
+   _message = message,
+   super(type: TCPRequestType.sendMessage, token: token);
 
   @override
-  Map<String, Object?> get body => {
-    'userid': _userid,
-    'targetid': _targetid,
-    'contenttype': _contenttype.literal,
-    'content': _content,
-    'timestamp': _timestamp,
-    'md5Encoded': _contentmd5,
-    'filemd5': _payload?.filemd5
-  };
+  Map<String, Object?> get body => _message.jsonObject;
 
-  LocalFile? get payload => _payload;
+  Message get message => _message;
 }
 
 class FetchMessageRequest extends TCPRequest {

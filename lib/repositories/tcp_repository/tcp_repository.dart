@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-11 22:55:28
+ * @LastEditTime : 2022-10-12 16:57:50
  * @Description  : TCP repository
  */
 
@@ -9,15 +9,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_response.dart';
 
 class TCPRepository {
-  TCPRepository({
+  TCPRepository._internal({
     required Socket socket,
     required String remoteAddress,
     required int remotePort
@@ -30,11 +32,28 @@ class TCPRepository {
       }
     });
     Future(() async {
-      await for(var response in _responseRawStreamController.stream) {
-        var payloadFile = await _payloadRawStreamController.stream.single;
-        await _pushResponse(responseBytes: response, tempFile: payloadFile);
+      var responseQueue = StreamQueue(_responseRawStreamController.stream);
+      var payloadQueue = StreamQueue(_payloadRawStreamController.stream);
+      while(await Future<bool>(() => !_responseRawStreamController.isClosed && !_payloadRawStreamController.isClosed)) {
+        var response = await responseQueue.next;
+        var payload = await payloadQueue.next;
+        await _pushResponse(responseBytes: response, tempFile: payload);
       }
+      responseQueue.cancel();
+      payloadQueue.cancel();
     });
+  }
+
+  static Future<TCPRepository> create({
+    required String serverAddress,
+    required int serverPort
+  }) async {
+    var socket = await Socket.connect(serverAddress, serverPort);
+    return TCPRepository._internal(
+      socket: socket, 
+      remoteAddress: serverAddress, 
+      remotePort: serverPort
+    );
   }
 
   final Socket _socket;
@@ -67,8 +86,32 @@ class TCPRepository {
   //Provide a request stream for widgets to push to
   final StreamController<TCPRequest> _requestStreamController = StreamController();
 
-  Future<void> pushRequest(TCPRequest request) async {
-    _requestStreamController.add(request);
+  void pushRequest(TCPRequest request) {
+    if(request.type == TCPRequestType.sendMessage) {
+      request as SendMessageRequest;
+      if(request.message.type == MessageType.file) {
+        Future(() async {
+          //Duplicate current socket
+          Socket socket = await Socket.connect(_remoteAddress, _remotePort);
+          TCPRepository duplicatedRepository = TCPRepository._internal(
+            socket: socket, 
+            remoteAddress: _remoteAddress, 
+            remotePort: _remotePort
+          );
+          duplicatedRepository._requestStreamController.add(request);
+          await for(var response in duplicatedRepository.responseStream) {
+            if(response.type == TCPResponseType.sendMessage) {
+              _responseStreamController.add(response);
+              break;
+            }
+          }
+          duplicatedRepository.dispose();
+        });
+      }
+    }
+    else {
+      _requestStreamController.add(request);
+    }
   }
 
   //Listen to the incoming stream and emits event whenever there is a intact request
@@ -86,16 +129,20 @@ class TCPRepository {
           //Clear the length indicator bytes
           buffer.removeRange(0, 8);
           //Create temp file to read payload (might be huge)
-          var tempFile = File('${Directory.current.path}/.tmp/${DateTime.now().microsecondsSinceEpoch}')..createSync();
+          Directory('${Directory.current.path}/.tmp').createSync();
           //Create a pull stream for payload file
           _payloadPullStreamController = StreamController();
           //Create a future that listens to the status of the payload transmission
-          Future(() async {
-            await for(var data in _payloadPullStreamController.stream) {
-              await tempFile.writeAsBytes(data, mode: FileMode.append, flush: true);
-            }
-            _payloadRawStreamController.add(tempFile);
-          });
+          () {
+            var payloadPullStream = _payloadPullStreamController.stream;
+            var tempFile = File('${Directory.current.path}/.tmp/${DateTime.now().microsecondsSinceEpoch}')..createSync();
+            Future(() async {
+              await for(var data in payloadPullStream) {
+                await tempFile.writeAsBytes(data, mode: FileMode.append, flush: true);
+              }
+              _payloadRawStreamController.add(tempFile);
+            });
+          }();
         }
         else {
           //Buffered data is not long enough
@@ -111,7 +158,6 @@ class TCPRepository {
             //Got intact request json
             //Emit request buffer through stream
             _responseRawStreamController.add(buffer.sublist(0, responseLength));
-            _responseRawStreamController.close();
             //Remove proccessed buffer
             buffer.removeRange(0, responseLength);
             //Clear awaiting request length
@@ -156,6 +202,10 @@ class TCPRepository {
     required List<int> responseBytes,
     required File tempFile
   }) async {
+    if(_responseStreamController.isClosed) {
+      await tempFile.delete();
+      return;
+    }
     var responseJSON = String.fromCharCodes(responseBytes);
     var responseObject = jsonDecode(responseJSON);
     TCPResponseType responseType = TCPResponseType.fromValue(responseObject['response'] as String);
@@ -225,8 +275,7 @@ class TCPRepository {
           jsonObject: responseObject,
           payload: LocalFile(
             file: tempFile,
-            filemd5: md5.convert(await tempFile.readAsBytes()).toString(),
-            ext: ""
+            filemd5: md5.convert(await tempFile.readAsBytes()).toString()
           )
         ));
         break;
@@ -258,7 +307,7 @@ class TCPRepository {
   }) async {
     //Duplicate current socket
     Socket socket = await Socket.connect(_remoteAddress, _remotePort);
-    TCPRepository duplicatedRepository = TCPRepository(
+    TCPRepository duplicatedRepository = TCPRepository._internal(
       socket: socket, 
       remoteAddress: _remoteAddress, 
       remotePort: _remotePort
@@ -278,11 +327,11 @@ class TCPRepository {
   }
 
   void dispose() {
+    _socket.close();
     _responseRawStreamController.close();
     _payloadPullStreamController.close();
     _payloadRawStreamController.close();
     _responseStreamController.close();
     _requestStreamController.close();
-    _socket.close();
   }
 }

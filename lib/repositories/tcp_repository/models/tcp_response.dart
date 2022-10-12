@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:02:19
- * @LastEditTime : 2022-10-11 22:55:48
+ * @LastEditTime : 2022-10-12 13:25:49
  * @Description  : 
  */
 
@@ -84,39 +84,39 @@ class SetTokenReponse extends TCPResponse {
 }
 
 class CheckStateResponse extends TCPResponse {
-  late final UserInfo _userInfo;
+  late final UserInfo? _userInfo;
 
   CheckStateResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _userInfo = UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
+    _userInfo = jsonObject['body'] == null ? null : UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
   }
 
-  UserInfo get userInfo => _userInfo;
+  UserInfo? get userInfo => _userInfo;
 }
 
 class RegisterResponse extends TCPResponse {
-  late final UserInfo _userInfo;
+  late final UserInfo? _userInfo;
 
   RegisterResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _userInfo = UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
+    _userInfo = jsonObject['body'] == null ? null : UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
   }
 
-  UserInfo get userInfo => _userInfo;
+  UserInfo? get userInfo => _userInfo;
 }
 
 class LoginResponse extends TCPResponse {
-  late final UserInfo _userInfo;
+  late final UserInfo? _userInfo;
 
   LoginResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _userInfo = UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
+    _userInfo = jsonObject['body'] == null ? null : UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
   }
 
-  UserInfo get userInfo => _userInfo;
+  UserInfo? get userInfo => _userInfo;
 }
 
 class LogoutResponse extends TCPResponse {
@@ -126,15 +126,15 @@ class LogoutResponse extends TCPResponse {
 }
 
 class GetProfileResponse extends TCPResponse {
-  late final UserInfo _userInfo;
+  late final UserInfo? _userInfo;
 
   GetProfileResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _userInfo = UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
+    _userInfo = jsonObject['body'] == null ? null : UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
   }
 
-  UserInfo get userInfo => _userInfo;
+  UserInfo? get userInfo => _userInfo;
 }
 
 class ModifyPasswordResponse extends TCPResponse {
@@ -144,15 +144,15 @@ class ModifyPasswordResponse extends TCPResponse {
 }
 
 class ModifyProfileResponse extends TCPResponse {
-  late final UserInfo _userInfo;
+  late final UserInfo? _userInfo;
 
   ModifyProfileResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _userInfo = UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
+    _userInfo = jsonObject['body'] == null ? null : UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
   }
 
-  UserInfo get userInfo => _userInfo;
+  UserInfo? get userInfo => _userInfo;
 }
 
 class SendMessageResponse extends TCPResponse {
@@ -203,8 +203,7 @@ class FetchFileResponse extends TCPResponse {
   }): super(jsonObject: jsonObject) {
     _payload = LocalFile(
       file: payload.file, 
-      filemd5: payload.filemd5, 
-      ext: (jsonObject['body'] as Map<String, Object?>)['ext'] as String
+      filemd5: payload.filemd5
     );
   }
 
@@ -212,15 +211,15 @@ class FetchFileResponse extends TCPResponse {
 }
 
 class SearchUserResponse extends TCPResponse {
-  late final UserInfo _userInfo;
+  late final UserInfo? _userInfo;
 
   SearchUserResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _userInfo = UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
+    _userInfo = jsonObject['body'] == null ? null : UserInfo.fromJSONObject(jsonObject: jsonObject['body'] as Map<String, Object?>);
   }
 
-  UserInfo get userInfo => _userInfo;
+  UserInfo? get userInfo => _userInfo;
 }
 
 class AddContactResponse extends TCPResponse {

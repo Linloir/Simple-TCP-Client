@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:44:03
- * @LastEditTime : 2022-10-11 16:55:08
+ * @LastEditTime : 2022-10-12 13:56:56
  * @Description  : Abstract TCP request class
  */
 
@@ -43,12 +43,12 @@ enum TCPRequestType {
 
 abstract class TCPRequest {
   final TCPRequestType _type;
-  final int _token;
+  final int? _token;
 
-  const TCPRequest({required TCPRequestType type, required int token}): _type = type, _token = token;
+  const TCPRequest({required TCPRequestType type, required int? token}): _type = type, _token = token;
 
   TCPRequestType get type => _type;
-  int get token => _token;
+  int? get token => _token;
 
   Map<String, Object?> get body;
 
@@ -56,7 +56,7 @@ abstract class TCPRequest {
     return jsonEncode({
       'request': type.value,
       'body': body,
-      'token': token
+      'tokenid': token
     });
   }
   
@@ -70,7 +70,7 @@ abstract class TCPRequest {
 }
 
 class CheckStateRequest extends TCPRequest {
-  const CheckStateRequest({required int token}): super(type: TCPRequestType.checkState, token: token);
+  const CheckStateRequest({required int? token}): super(type: TCPRequestType.checkState, token: token);
 
   @override
   Map<String, Object?> get body => {};
@@ -81,7 +81,7 @@ class RegisterRequest extends TCPRequest {
   
   RegisterRequest({
     required UserIdentity identity,
-    required token
+    required int? token
   }): _identity = identity, super(type: TCPRequestType.register, token: token);
 
   @override
@@ -93,7 +93,7 @@ class LoginRequest extends TCPRequest {
   
   LoginRequest({
     required UserIdentity identity,
-    required token
+    required int? token
   }): _identity = identity, super(type: TCPRequestType.login, token: token);
 
   @override
@@ -101,14 +101,14 @@ class LoginRequest extends TCPRequest {
 }
 
 class LogoutRequest extends TCPRequest {
-  const LogoutRequest({required int token}): super(type: TCPRequestType.logout, token: token);
+  const LogoutRequest({required int? token}): super(type: TCPRequestType.logout, token: token);
 
   @override
   Map<String, Object?> get body => {};
 }
 
 class GetProfileRequest extends TCPRequest {
-  const GetProfileRequest({required int token}): super(type: TCPRequestType.profile, token: token);
+  const GetProfileRequest({required int? token}): super(type: TCPRequestType.profile, token: token);
 
   @override
   Map<String, Object?> get body => {};
@@ -119,7 +119,7 @@ class ModifyPasswordRequest extends TCPRequest {
   
   ModifyPasswordRequest({
     required UserIdentity identity,
-    required token
+    required int? token
   }): _identity = identity, super(type: TCPRequestType.modifyPassword, token: token);
 
   @override
@@ -131,7 +131,7 @@ class ModifyProfileRequest extends TCPRequest {
 
   const ModifyProfileRequest ({
     required UserInfo userInfo,
-    required int token
+    required int? token
   }): _userinfo = userInfo, super(type: TCPRequestType.modifyProfile, token: token);
 
   @override
@@ -143,7 +143,7 @@ class SendMessageRequest extends TCPRequest {
 
   SendMessageRequest({
     required Message message,
-    required int token
+    required int? token
   }):
    _message = message,
    super(type: TCPRequestType.sendMessage, token: token);
@@ -170,7 +170,7 @@ class SendMessageRequest extends TCPRequest {
 }
 
 class FetchMessageRequest extends TCPRequest {
-  const FetchMessageRequest({required int token}): super(type: TCPRequestType.fetchMessage, token: token);
+  const FetchMessageRequest({required int? token}): super(type: TCPRequestType.fetchMessage, token: token);
 
   @override
   Map<String, Object?> get body => {};
@@ -179,7 +179,7 @@ class FetchMessageRequest extends TCPRequest {
 class FindFileRequest extends TCPRequest {
   final LocalFile _file;
 
-  const FindFileRequest({required LocalFile file, required int token}): _file = file, super(type: TCPRequestType.findFile, token: token);
+  const FindFileRequest({required LocalFile file, required int? token}): _file = file, super(type: TCPRequestType.findFile, token: token);
 
   @override
   Map<String, Object?> get body => {
@@ -192,7 +192,7 @@ class FindFileRequest extends TCPRequest {
 class FetchFileRequest extends TCPRequest {
   final String _msgmd5;
 
-  const FetchFileRequest({required String msgmd5, required int token}): _msgmd5 = msgmd5, super(type: TCPRequestType.fetchFile, token: token);
+  const FetchFileRequest({required String msgmd5, required int? token}): _msgmd5 = msgmd5, super(type: TCPRequestType.fetchFile, token: token);
 
   @override
   Map<String, Object?> get body => {
@@ -205,7 +205,7 @@ class FetchFileRequest extends TCPRequest {
 class SearchUserRequest extends TCPRequest {
   final String _username;
 
-  const SearchUserRequest({required String username, required int token}): _username = username, super(type: TCPRequestType.searchUser, token: token);
+  const SearchUserRequest({required String username, required int? token}): _username = username, super(type: TCPRequestType.searchUser, token: token);
 
   @override
   Map<String, Object?> get body => {
@@ -218,7 +218,7 @@ class SearchUserRequest extends TCPRequest {
 class AddContactRequest extends TCPRequest {
   final int _userid;
 
-  const AddContactRequest({required int userid, required int token}): _userid = userid, super(type: TCPRequestType.addContact, token: token);
+  const AddContactRequest({required int userid, required int? token}): _userid = userid, super(type: TCPRequestType.addContact, token: token);
 
   @override
   Map<String, Object?> get body => {
@@ -229,7 +229,7 @@ class AddContactRequest extends TCPRequest {
 }
 
 class FetchContactRequest extends TCPRequest {
-  const FetchContactRequest({required int token}): super(type: TCPRequestType.fetchContact, token: token);
+  const FetchContactRequest({required int? token}): super(type: TCPRequestType.fetchContact, token: token);
 
   @override
   Map<String, Object?> get body => {};

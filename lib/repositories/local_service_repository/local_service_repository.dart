@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-11 23:49:16
+ * @LastEditTime : 2022-10-12 15:35:30
  * @Description  : Local Service Repository
  */
 
@@ -74,8 +74,7 @@ class LocalServiceRepository {
     var file = File(filePickResult.files.single.path!);
     return LocalFile(
       file: file, 
-      filemd5: md5.convert(await file.readAsBytes()).toString(),
-      ext: file.path.substring(file.path.lastIndexOf('.'))
+      filemd5: md5.convert(await file.readAsBytes()).toString()
     );
   }
 
@@ -157,7 +156,7 @@ class LocalServiceRepository {
     return queryResult.map((e) => Message.fromJSONObject(jsonObject: e)).toList();
   }
 
-  Future<File?> findFile({required String filemd5}) async {
+  Future<File?> findFile({required String filemd5, required String fileName}) async {
     var directory = await _database.query(
       'files',
       where: 'filemd5 = ?',
@@ -173,7 +172,25 @@ class LocalServiceRepository {
       //Try if the file exists
       var file = File(filePath);
       if(await file.exists()) {
-        return file;
+        //Copy to desired file path
+        var pref = await SharedPreferences.getInstance();
+        var userID = pref.getInt('userid');
+        var documentPath = (await getApplicationDocumentsDirectory()).path;
+        var fileBaseName = fileName.substring(0, fileName.lastIndexOf('.'));
+        var fileExt = fileName.substring(fileName.lastIndexOf('.'));
+        var duplicate = 0;
+        //Rename target file
+        await Directory('$documentPath/files').create();
+        await Directory('$documentPath/files/$userID').create();
+        var targetFilePath = '$documentPath/files/$userID/$fileBaseName$fileExt';
+        var targetFile = File(targetFilePath);
+        while(await targetFile.exists()) {
+          duplicate += 1;
+          targetFilePath = '$documentPath/files/$userID/$fileBaseName($duplicate)$fileExt';
+          targetFile = File(targetFilePath);
+        }
+        targetFile = await file.copy(targetFilePath);
+        return targetFile;
       }
       else {
         //Delete all linked files
@@ -184,6 +201,7 @@ class LocalServiceRepository {
             filemd5
           ]
         );
+        //TODO: maybe throw some error here?
         return null;
       }
     }
@@ -194,7 +212,9 @@ class LocalServiceRepository {
   }) async {
     //Write to file library
     var documentPath = (await getApplicationDocumentsDirectory()).path;
-    var permanentFilePath = '$documentPath/files/${tempFile.filemd5}${tempFile.ext}';
+    await Directory('$documentPath/files').create();
+    await Directory('$documentPath/files/.lib').create();
+    var permanentFilePath = '$documentPath/files/.lib/${tempFile.filemd5}';
     await tempFile.file.copy(permanentFilePath);
     await _database.insert(
       'files',
@@ -234,7 +254,7 @@ class LocalServiceRepository {
     _userInfoChangeStreamController.add(userInfo);
   }
 
-  Future<UserInfo?> fetchUserInfo({required userid}) async {
+  Future<UserInfo?> fetchUserInfoViaID({required int userid}) async {
     var targetUser = await _database.query(
       'users',
       where: 'userid = ?',
@@ -246,5 +266,9 @@ class LocalServiceRepository {
     else {
       return UserInfo.fromJSONObject(jsonObject: targetUser[0]);
     }
+  }
+
+  Future<UserInfo?> fetchUserInfoViaUsername({required String username}) async {
+    
   }
 }

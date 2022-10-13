@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-13 16:55:48
+ * @LastEditTime : 2022-10-13 23:02:55
  * @Description  : 
  */
 
@@ -15,9 +15,11 @@ import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
 import 'package:tcp_client/home/view/message_page/mesage_page.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
+import 'package:tcp_client/repositories/user_repository/user_repository.dart';
+import 'package:tcp_client/search/search_page.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({
+  const HomePage({
     required this.localServiceRepository,
     required this.tcpRepository,
     super.key
@@ -25,8 +27,6 @@ class HomePage extends StatelessWidget {
 
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
-
-  final PageController _controller = PageController();
 
   static Route<void> route({
     required LocalServiceRepository localServiceRepository,
@@ -38,47 +38,98 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider<MessageListCubit>(
-          create: (context) => MessageListCubit(
-            localServiceRepository: localServiceRepository, 
-            tcpRepository: tcpRepository
-          ),
-        ),
-        BlocProvider<ContactCubit>(
-          create: (context) => ContactCubit(
+        RepositoryProvider<UserRepository>(
+          create: (context) => UserRepository(
             localServiceRepository: localServiceRepository,
             tcpRepository: tcpRepository
           ),
         ),
-        BlocProvider<HomeCubit>(
-          create: (context) => HomeCubit(
-            localServiceRepository: localServiceRepository,
-            tcpRepository: tcpRepository
-          ),
-        )
+        RepositoryProvider<LocalServiceRepository>.value(value: localServiceRepository),
+        RepositoryProvider<TCPRepository>.value(value: tcpRepository),
       ],
-      child: BlocListener<HomeCubit, HomeState>(
-        listenWhen:(previous, current) => current.page != previous.page,
-        listener: (context, state) {
-          _controller.animateToPage(
-            state.page.value, 
-            duration: const Duration(milliseconds: 375), 
-            curve: Curves.easeInOutCubicEmphasized
-          );
-        },
-        child: Scaffold(
-          body: PageView(
-            controller: _controller,
-            children: const [
-              MessagePage(),
-              ContactPage()
-            ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<MessageListCubit>(
+            create: (context) => MessageListCubit(
+              localServiceRepository: localServiceRepository, 
+              tcpRepository: tcpRepository
+            ),
+          ),
+          BlocProvider<ContactCubit>(
+            create: (context) => ContactCubit(
+              localServiceRepository: localServiceRepository,
+              tcpRepository: tcpRepository
+            ),
+          ),
+          BlocProvider<HomeCubit>(
+            create: (context) => HomeCubit(
+              localServiceRepository: localServiceRepository,
+              tcpRepository: tcpRepository
+            ),
+          )
+        ],
+        child: HomePageView(),
+      ),
+    );
+  }
+}
+
+class HomePageView extends StatelessWidget {
+  HomePageView({super.key});
+
+  final PageController _controller = PageController();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<HomeCubit, HomeState>(
+      listenWhen:(previous, current) => current.page != previous.page,
+      listener: (context, state) {
+        _controller.animateToPage(
+          state.page.value, 
+          duration: const Duration(milliseconds: 375), 
+          curve: Curves.easeInOutCubicEmphasized
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              return Text(
+                state.page.literal,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold
+                ),
+              );
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search_rounded),
+              onPressed: () {
+                Navigator.of(context).push(SearchPage.route(
+                  localServiceRepository: context.read<LocalServiceRepository>(), 
+                  tcpRepository: context.read<TCPRepository>(), 
+                  userRepository: context.read<UserRepository>()
+                ));
+              },
+            )
+          ],
+        ),
+        body: Center(
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder:(context, state) => PageView(
+              controller: _controller,
+              onPageChanged: (value) => context.read<HomeCubit>().switchPage(HomePagePosition.fromValue(value)),
+              children: const [
+                MessagePage(),
+                ContactPage()
+              ],
+            ),
           ),
         ),
-      )
-      
+      ),
     );
   }
 }

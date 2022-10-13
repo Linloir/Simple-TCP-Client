@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:07
- * @LastEditTime : 2022-10-13 16:10:57
+ * @LastEditTime : 2022-10-13 22:59:25
  * @Description  : 
  */
 
@@ -18,36 +18,39 @@ class ContactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ContactCubit, ContactState>(
-      builder: (context, state) {
-        return AzListView(
-          data: state.indexedData,
-          itemCount: state.contacts.length,
-          itemBuilder: (context, index) {
-            return ContactTile(
-              userInfo: state.contacts[index],
-            );
-          },
-          physics: const BouncingScrollPhysics(),
-          susItemBuilder: (context, index) {
-            return Container(
-              height: 40,
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.only(left: 16.0),
-              color: Colors.grey[200],
-              alignment: Alignment.centerLeft,
-              child: Text(
-                ContactModel(userInfo: state.contacts[index]).getSuspensionTag(),
-                softWrap: false,
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.grey[700],
+    return Container(
+      color: Colors.green,
+      child: BlocBuilder<ContactCubit, ContactState>(
+        builder: (context, state) {
+          return AzListView(
+            data: state.indexedData,
+            itemCount: state.contacts.length,
+            itemBuilder: (context, index) {
+              return ContactTile(
+                userInfo: state.contacts[index],
+              );
+            },
+            physics: const BouncingScrollPhysics(),
+            susItemBuilder: (context, index) {
+              return Container(
+                height: 40,
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.only(left: 16.0),
+                color: Colors.grey[200],
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  ContactModel(userInfo: state.contacts[index]).getSuspensionTag(),
+                  softWrap: false,
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey[700],
+                  ),
                 ),
-              ),
-            );
-          },
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

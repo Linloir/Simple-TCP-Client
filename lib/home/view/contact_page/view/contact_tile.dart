@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:02:00
- * @LastEditTime : 2022-10-13 16:44:03
+ * @LastEditTime : 2022-10-13 22:26:07
  * @Description  : 
  */
 
@@ -32,7 +32,7 @@ class ContactTile extends StatelessWidget {
           InkWell(
             onTap: () {
               Navigator.of(context).push(ChatPage.route(userInfo: userInfo));
-              context.read<MessageListCubit>().addEmptyMessageOf(user: userInfo);
+              context.read<MessageListCubit>().addEmptyMessageOf(targetUser: userInfo.userID);
               context.read<HomeCubit>().switchPage(HomePagePosition.message);
             },
           ),

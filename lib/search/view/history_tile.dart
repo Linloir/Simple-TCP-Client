@@ -1,27 +1,24 @@
 /*
  * @Author       : Linloir
- * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-13 22:23:31
+ * @Date         : 2022-10-13 21:41:49
+ * @LastEditTime : 2022-10-13 22:31:37
  * @Description  : 
  */
-
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:tcp_client/common/avatar/avatar.dart';
 import 'package:tcp_client/common/username/username.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
-import 'package:tcp_client/repositories/common_models/userinfo.dart';
 
-class MessageTile extends StatelessWidget {
-  const MessageTile({
+class HistoryTile extends StatelessWidget {
+  const HistoryTile({
     required this.userID,
-    this.message,
+    required this.message,
     super.key
   });
 
   final int userID;
-  final Message? message;
+  final Message message;
 
   @override
   Widget build(BuildContext context) {
@@ -36,37 +33,6 @@ class MessageTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             UserAvatar(userid: userID),
-            // if(userInfo.avatarEncoded != null && userInfo.avatarEncoded!.isEmpty) 
-            //   Container(
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //       border: Border.all(
-            //         color: Colors.grey[700]!,
-            //         width: 1.0
-            //       )
-            //     ),
-            //     child: ClipRRect(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //       child: OverflowBox(
-            //         alignment: Alignment.center,
-            //         child: FittedBox(
-            //           fit: BoxFit.fitWidth,
-            //           child: Image.memory(base64Decode(userInfo.avatarEncoded!)),
-            //         ),
-            //       )
-            //     ),
-            //   ),
-            // if(userInfo.avatarEncoded == null || userInfo.avatarEncoded!.isEmpty)
-            //   Container(
-            //     color: Colors.grey,
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //       border: Border.all(
-            //         color: Colors.grey[700]!,
-            //         width: 1.0
-            //       )
-            //     ),
-            //   ),
             const SizedBox(width: 12,),
             Expanded(
               child: Column(
@@ -84,7 +50,7 @@ class MessageTile extends StatelessWidget {
                       vertical: 4.0
                     ),
                     child: Text(
-                      message?.contentDecoded ?? '',
+                      message.contentDecoded,
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -93,20 +59,18 @@ class MessageTile extends StatelessWidget {
                 ],
               ),
             ),
-            if(message != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 0
-                ),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    getTimeStamp(message!.timeStamp)
-                  ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 0
+              ),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  getTimeStamp(message.timeStamp)
                 ),
               ),
-              
+            ),
           ],
         ),
       ),

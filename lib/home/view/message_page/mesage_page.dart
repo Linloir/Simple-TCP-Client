@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:18
- * @LastEditTime : 2022-10-13 16:11:24
+ * @LastEditTime : 2022-10-13 22:59:10
  * @Description  : 
  */
 
@@ -18,19 +18,22 @@ class MessagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MessageListCubit, MessageListState>(
       builder: (context, state) {
-        return ListView.separated(
-          itemBuilder: (context, index) {
-            return MessageTile(
-              userInfo: state.messageList[index].userInfo,
-              message: state.messageList[index].message,
-            );
-          }, 
-          separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0.5,
-            );
-          }, 
-          itemCount: state.messageList.length
+        return Container(
+          color: Colors.blue,
+          child: ListView.separated(
+            itemBuilder: (context, index) {
+              return MessageTile(
+                userID: state.messageList[index].targetUser,
+                message: state.messageList[index].message,
+              );
+            }, 
+            separatorBuilder: (context, index) {
+              return const Divider(
+                height: 0.5,
+              );
+            }, 
+            itemCount: state.messageList.length
+          ),
         );
       }
     );

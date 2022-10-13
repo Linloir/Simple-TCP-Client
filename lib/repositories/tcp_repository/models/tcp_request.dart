@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:44:03
- * @LastEditTime : 2022-10-12 13:56:56
+ * @LastEditTime : 2022-10-13 23:04:49
  * @Description  : Abstract TCP request class
  */
 
@@ -108,10 +108,19 @@ class LogoutRequest extends TCPRequest {
 }
 
 class GetProfileRequest extends TCPRequest {
-  const GetProfileRequest({required int? token}): super(type: TCPRequestType.profile, token: token);
+  const GetProfileRequest({
+    required int userid, 
+    required int? token
+  }): _userid = userid, super(type: TCPRequestType.profile, token: token);
+
+  final int _userid;
+
+  int get userid => _userid;
 
   @override
-  Map<String, Object?> get body => {};
+  Map<String, Object?> get body => {
+    'userid': _userid
+  };
 }
 
 class ModifyPasswordRequest extends TCPRequest {
@@ -205,14 +214,15 @@ class FetchFileRequest extends TCPRequest {
 class SearchUserRequest extends TCPRequest {
   final String _username;
 
-  const SearchUserRequest({required String username, required int? token}): _username = username, super(type: TCPRequestType.searchUser, token: token);
+  SearchUserRequest({required String username, required int? token}): 
+    _username = base64.encode(utf8.encode(username)), super(type: TCPRequestType.searchUser, token: token);
 
   @override
   Map<String, Object?> get body => {
     'username': _username,
   };
 
-  String get username => _username;
+  String get username => utf8.decode(base64.decode(_username));
 }
 
 class AddContactRequest extends TCPRequest {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:48:54
- * @LastEditTime : 2022-10-12 23:50:17
+ * @LastEditTime : 2022-10-13 22:24:01
  * @Description  : 
  */
 
@@ -11,13 +11,13 @@ import 'package:tcp_client/repositories/common_models/userinfo.dart';
 
 class MessageInfo extends Equatable {
   final Message? message;
-  final UserInfo userInfo;
+  final int targetUser;
 
   const MessageInfo({
     this.message,
-    required this.userInfo
+    required this.targetUser
   });
 
   @override
-  List<Object?> get props => [message?.contentmd5, userInfo];
+  List<Object?> get props => [message?.contentmd5, targetUser];
 }

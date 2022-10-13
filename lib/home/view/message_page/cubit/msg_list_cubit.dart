@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-13 16:12:53
+ * @LastEditTime : 2022-10-13 22:27:29
  * @Description  : 
  */
 
@@ -25,11 +25,11 @@ class MessageListCubit extends Cubit<MessageListState> {
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
 
-  void addEmptyMessageOf({required UserInfo user}) {
-    if(state.messageList.any((element) => element.userInfo.userID == user.userID)) {
+  void addEmptyMessageOf({required int targetUser}) {
+    if(state.messageList.any((element) => element.targetUser == targetUser)) {
       return;
     }
-    var newList = [MessageInfo(userInfo: user)];
+    var newList = [MessageInfo(targetUser: targetUser)];
     emit(MessageListState(messageList: newList..addAll(state.messageList)));
   }
 
@@ -50,12 +50,9 @@ class MessageListCubit extends Cubit<MessageListState> {
           //therefore only insert to map if the target user does not exist
           if(!addedUserSet.contains(targetUser))  {
             addedUserSet.add(targetUser);
-            var targetUserInfo = await localServiceRepository.fetchUserInfoViaID(userid: targetUser);
-            //TODO: Maybe need to add API in tcp repository to fetch user info via id
-            targetUserInfo ??= UserInfo(userid: targetUser, username: targetUser.toString());
             //Create message info
             latestMessages.add(MessageInfo(
-              userInfo: targetUserInfo,
+              targetUser: targetUser,
               message: message
             ));
           }
@@ -74,12 +71,9 @@ class MessageListCubit extends Cubit<MessageListState> {
         var targetUser = response.message.senderID == curUser ? 
                           response.message.recieverID : 
                           response.message.senderID;
-        var targetUserInfo = await localServiceRepository.fetchUserInfoViaID(userid: targetUser);
-        //TODO: Maybe need to add API in tcp repository to fetch user info via id
-        targetUserInfo ??= UserInfo(userid: targetUser, username: targetUser.toString());
         emit(state.updateWithSingle(
           messageInfo: MessageInfo(
-            userInfo: targetUserInfo, 
+            targetUser: targetUser, 
             message: response.message
           )
         ));

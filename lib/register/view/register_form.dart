@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:tcp_client/register/bloc/register_cubit.dart';
-import 'package:tcp_client/register/bloc/register_state.dart';
+import 'package:tcp_client/register/cubit/register_cubit.dart';
+import 'package:tcp_client/register/cubit/register_state.dart';
 import 'package:tcp_client/register/models/password.dart';
 import 'package:tcp_client/register/models/username.dart';
 

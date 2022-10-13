@@ -8,7 +8,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tcp_client/register/bloc/register_state.dart';
+import 'package:tcp_client/register/cubit/register_state.dart';
 import 'package:tcp_client/register/models/password.dart';
 import 'package:tcp_client/register/models/username.dart';
 import 'package:tcp_client/repositories/common_models/useridentity.dart';

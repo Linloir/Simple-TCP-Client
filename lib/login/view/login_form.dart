@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:tcp_client/login/bloc/login_cubit.dart';
-import 'package:tcp_client/login/bloc/login_state.dart';
+import 'package:tcp_client/login/cubit/login_cubit.dart';
+import 'package:tcp_client/login/cubit/login_state.dart';
 import 'package:tcp_client/login/models/password.dart';
 import 'package:tcp_client/login/models/username.dart';
 

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 15:06:30
- * @LastEditTime : 2022-10-12 18:03:29
+ * @LastEditTime : 2022-10-12 23:37:04
  * @Description  : 
  */
 
@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:tcp_client/home/home_page.dart';
-import 'package:tcp_client/login/bloc/login_cubit.dart';
-import 'package:tcp_client/login/bloc/login_state.dart';
+import 'package:tcp_client/login/cubit/login_cubit.dart';
+import 'package:tcp_client/login/cubit/login_state.dart';
 import 'package:tcp_client/login/view/login_form.dart';
 import 'package:tcp_client/register/register_page.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';

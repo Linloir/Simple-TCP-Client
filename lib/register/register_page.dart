@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 17:36:38
- * @LastEditTime : 2022-10-12 17:50:42
+ * @LastEditTime : 2022-10-13 16:45:44
  * @Description  : 
  */
 /*
@@ -64,7 +64,10 @@ class RegisterPage extends StatelessWidget {
                 const SnackBar(content: Text('Register Successed'))
               );
               Future.delayed(const Duration(seconds: 1)).then((_) {
-                Navigator.of(context).pushReplacement(HomePage.route());
+                Navigator.of(context).pushReplacement(HomePage.route(
+                  localServiceRepository: localServiceRepository,
+                  tcpRepository: tcpRepository
+                ));
               });
             }
           },

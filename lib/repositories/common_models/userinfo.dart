@@ -1,9 +1,11 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 14:30:10
- * @LastEditTime : 2022-10-11 15:39:13
+ * @LastEditTime : 2022-10-13 15:38:18
  * @Description  : 
  */
+
+import 'dart:convert';
 
 import 'package:tcp_client/repositories/common_models/json_encodable.dart';
 
@@ -25,7 +27,7 @@ class UserInfo extends JSONEncodable {
     required Map<String, Object?> jsonObject
   }):
     _userid = jsonObject['userid'] as int,
-    _username = jsonObject['username'] as String,
+    _username = utf8.decode(base64.decode(jsonObject['username'] as String)),
     _avatar = jsonObject['avatar'] as String?;
   
   int get userID => _userid;
@@ -35,7 +37,7 @@ class UserInfo extends JSONEncodable {
   @override
   Map<String, Object?> get jsonObject => {
     'userid': _userid,
-    'username': _username,
+    'username': base64.encode(utf8.encode(_username)),
     'avatar': _avatar
   };
 }

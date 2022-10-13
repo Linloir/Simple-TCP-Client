@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 15:06:30
- * @LastEditTime : 2022-10-12 23:37:04
+ * @LastEditTime : 2022-10-13 16:46:06
  * @Description  : 
  */
 
@@ -54,7 +54,10 @@ class LoginPage extends StatelessWidget {
                 const SnackBar(content: Text('Login Successed'))
               );
               Future.delayed(const Duration(seconds: 1)).then((_) {
-                Navigator.of(context).pushReplacement(HomePage.route());
+                Navigator.of(context).pushReplacement(HomePage.route(
+                  localServiceRepository: localServiceRepository,
+                  tcpRepository: tcpRepository
+                ));
               });
             }
           },

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-10 08:04:53
- * @LastEditTime : 2022-10-12 17:55:07
+ * @LastEditTime : 2022-10-13 16:46:33
  * @Description  : 
  */
 import 'package:flutter/material.dart';
@@ -52,7 +52,10 @@ class SplashPage extends StatelessWidget {
           if(state.isDone) {
             Future.delayed(const Duration(seconds: 1)).then((_) async {
               if((await SharedPreferences.getInstance()).getInt('userid') != null) {
-                Navigator.of(context).pushReplacement(HomePage.route());
+                Navigator.of(context).pushReplacement(HomePage.route(
+                  localServiceRepository: state.localServiceRepository!,
+                  tcpRepository: state.tcpRepository!
+                ));
               }
               else {
                 Navigator.of(context).pushReplacement(LoginPage.route(

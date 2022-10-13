@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-13 14:00:12
+ * @LastEditTime : 2022-10-13 14:57:14
  * @Description  : 
  */
 
@@ -64,6 +64,7 @@ class MessageTile extends StatelessWidget {
                   )
                 ),
               ),
+            const SizedBox(width: 12,),
             Expanded(
               child: Column(
                 children: [

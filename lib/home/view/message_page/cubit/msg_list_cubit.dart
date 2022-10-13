@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-13 11:14:54
+ * @LastEditTime : 2022-10-13 16:12:53
  * @Description  : 
  */
 
@@ -19,13 +19,21 @@ class MessageListCubit extends Cubit<MessageListState> {
     required this.localServiceRepository,
     required this.tcpRepository
   }): super(MessageListState.empty()) {
-    tcpRepository.responseStreamBroadcast.listen(onResponse);
+    tcpRepository.responseStreamBroadcast.listen(_onResponse);
   }
 
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
 
-  Future<void> onResponse(TCPResponse response) async {
+  void addEmptyMessageOf({required UserInfo user}) {
+    if(state.messageList.any((element) => element.userInfo.userID == user.userID)) {
+      return;
+    }
+    var newList = [MessageInfo(userInfo: user)];
+    emit(MessageListState(messageList: newList..addAll(state.messageList)));
+  }
+
+  Future<void> _onResponse(TCPResponse response) async {
     switch(response.type) {
       case TCPResponseType.fetchMessage: {
         response as FetchMessageResponse;

@@ -1,9 +1,11 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:01:45
- * @LastEditTime : 2022-10-13 14:50:34
+ * @LastEditTime : 2022-10-14 11:49:50
  * @Description  : 
  */
+
+import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,11 +20,15 @@ class ContactCubit extends Cubit<ContactState> {
     required this.localServiceRepository,
     required this.tcpRepository
   }): super(ContactState.empty()) {
-    tcpRepository.responseStreamBroadcast.listen(_onResponse);
+    subscription = tcpRepository.responseStreamBroadcast.listen(_onResponse);
+    updateContacts();
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {updateContacts();});
   }
 
-  LocalServiceRepository localServiceRepository;
-  TCPRepository tcpRepository;
+  final LocalServiceRepository localServiceRepository;
+  final TCPRepository tcpRepository;
+  late final StreamSubscription subscription;
+  late final Timer timer;
 
   void _onResponse(TCPResponse response) {
     switch(response.type) {
@@ -41,5 +47,13 @@ class ContactCubit extends Cubit<ContactState> {
 
   Future<void> updateContacts() async {
     tcpRepository.pushRequest(FetchContactRequest(token: (await SharedPreferences.getInstance()).getInt('token')));
+  }
+
+  //Override dispose to cancel the subscription
+  @override
+  Future<void> close() {
+    subscription.cancel();
+    timer.cancel();
+    return super.close();
   }
 }

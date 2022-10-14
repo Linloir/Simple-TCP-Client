@@ -1,9 +1,10 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-10 08:04:53
- * @LastEditTime : 2022-10-13 16:46:33
+ * @LastEditTime : 2022-10-14 11:45:01
  * @Description  : 
  */
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},
+      ),
       home: const SplashPage(),
     );
   }
@@ -50,9 +54,14 @@ class SplashPage extends StatelessWidget {
       child: BlocListener<InitializationCubit, InitializationState>(
         listener: (context, state) {
           if(state.isDone) {
-            Future.delayed(const Duration(seconds: 1)).then((_) async {
-              if((await SharedPreferences.getInstance()).getInt('userid') != null) {
+            Future<int?>(() async {
+              await Future.delayed(const Duration(seconds: 1));
+              var pref = await SharedPreferences.getInstance();
+              return pref.getInt('userid');
+            }).then((userID) {
+              if(userID != null) {
                 Navigator.of(context).pushReplacement(HomePage.route(
+                  userID: userID,
                   localServiceRepository: state.localServiceRepository!,
                   tcpRepository: state.tcpRepository!
                 ));

@@ -1,17 +1,22 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-13 22:23:31
+ * @LastEditTime : 2022-10-14 12:07:32
  * @Description  : 
  */
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tcp_client/chat/chat_page.dart';
 import 'package:tcp_client/common/avatar/avatar.dart';
 import 'package:tcp_client/common/username/username.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/common_models/userinfo.dart';
+import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
+import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
+import 'package:tcp_client/repositories/user_repository/user_repository.dart';
 
 class MessageTile extends StatelessWidget {
   const MessageTile({
@@ -25,90 +30,105 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 24.0
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            UserAvatar(userid: userID),
-            // if(userInfo.avatarEncoded != null && userInfo.avatarEncoded!.isEmpty) 
-            //   Container(
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //       border: Border.all(
-            //         color: Colors.grey[700]!,
-            //         width: 1.0
-            //       )
-            //     ),
-            //     child: ClipRRect(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //       child: OverflowBox(
-            //         alignment: Alignment.center,
-            //         child: FittedBox(
-            //           fit: BoxFit.fitWidth,
-            //           child: Image.memory(base64Decode(userInfo.avatarEncoded!)),
-            //         ),
-            //       )
-            //     ),
-            //   ),
-            // if(userInfo.avatarEncoded == null || userInfo.avatarEncoded!.isEmpty)
-            //   Container(
-            //     color: Colors.grey,
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(5.0),
-            //       border: Border.all(
-            //         color: Colors.grey[700]!,
-            //         width: 1.0
-            //       )
-            //     ),
-            //   ),
-            const SizedBox(width: 12,),
-            Expanded(
-              child: Column(
-                children: [
+    return IntrinsicHeight(
+      child: Stack(
+      fit: StackFit.expand,
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(ChatPage.route(
+                userRepository: context.read<UserRepository>(),
+                localServiceRepository: context.read<LocalServiceRepository>(),
+                tcpRepository: context.read<TCPRepository>(),
+                userID: userID
+              ));
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 24.0
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                UserAvatar(userid: userID),
+                // if(userInfo.avatarEncoded != null && userInfo.avatarEncoded!.isEmpty) 
+                //   Container(
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(5.0),
+                //       border: Border.all(
+                //         color: Colors.grey[700]!,
+                //         width: 1.0
+                //       )
+                //     ),
+                //     child: ClipRRect(
+                //       borderRadius: BorderRadius.circular(5.0),
+                //       child: OverflowBox(
+                //         alignment: Alignment.center,
+                //         child: FittedBox(
+                //           fit: BoxFit.fitWidth,
+                //           child: Image.memory(base64Decode(userInfo.avatarEncoded!)),
+                //         ),
+                //       )
+                //     ),
+                //   ),
+                // if(userInfo.avatarEncoded == null || userInfo.avatarEncoded!.isEmpty)
+                //   Container(
+                //     color: Colors.grey,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(5.0),
+                //       border: Border.all(
+                //         color: Colors.grey[700]!,
+                //         width: 1.0
+                //       )
+                //     ),
+                //   ),
+                const SizedBox(width: 16,),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 0
+                        ),
+                        child: UserNameText(userid: userID, fontWeight: FontWeight.bold,)
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 4.0
+                        ),
+                        child: Text(
+                          message?.contentDecoded ?? '',
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                if(message != null)
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8.0,
                       horizontal: 0
                     ),
-                    child: UserNameText(userid: userID, fontWeight: FontWeight.bold,)
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4.0
-                    ),
-                    child: Text(
-                      message?.contentDecoded ?? '',
-                      style: const TextStyle(
-                        fontSize: 16,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        getTimeStamp(message!.timeStamp)
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-            if(message != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 0
-                ),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    getTimeStamp(message!.timeStamp)
                   ),
-                ),
-              ),
-              
-          ],
-        ),
+                  
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

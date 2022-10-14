@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 17:04:12
- * @LastEditTime : 2022-10-13 23:24:13
+ * @LastEditTime : 2022-10-14 10:38:44
  * @Description  : 
  */
 
@@ -59,11 +59,17 @@ class SearchPage extends StatelessWidget {
                   if(state.userResults.isNotEmpty)
                     ...[
                       const SizedBox(height: 16.0,),
-                      const Text(
-                        'Users',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 36.0,
+                          vertical: 8.0
+                        ),
+                        child: Text(
+                          'Users',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8.0,),
@@ -72,11 +78,17 @@ class SearchPage extends StatelessWidget {
                   if(state.historyResults.isNotEmpty)
                     ...[
                       const SizedBox(height: 16.0,),
-                      const Text(
-                        'Histories',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 36.0,
+                          vertical: 8.0
+                        ),
+                        child: Text(
+                          'Histories',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8.0,),
@@ -86,16 +98,22 @@ class SearchPage extends StatelessWidget {
                       ))
                     ],
                   if(state.historyResults.isEmpty && state.userResults.isEmpty)
-                    const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'No result found',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
+                    ...[
+                      const SizedBox(height: 16.0,),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 36.0,
+                          vertical: 8.0
+                        ),
+                        child: Text(
+                          'No Results',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20
+                          ),
                         ),
                       ),
-                    )
+                    ],
                 ],
               );
             },

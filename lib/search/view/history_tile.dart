@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:41:49
- * @LastEditTime : 2022-10-13 22:31:37
+ * @LastEditTime : 2022-10-14 10:38:31
  * @Description  : 
  */
 
@@ -25,7 +25,7 @@ class HistoryTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 16.0,
-        horizontal: 24.0
+        horizontal: 36.0
       ),
       child: IntrinsicHeight(
         child: Row(

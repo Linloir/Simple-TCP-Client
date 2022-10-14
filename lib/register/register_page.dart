@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 17:36:38
- * @LastEditTime : 2022-10-13 16:45:44
+ * @LastEditTime : 2022-10-14 11:22:38
  * @Description  : 
  */
 /*
@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/home_page.dart';
 import 'package:tcp_client/register/cubit/register_cubit.dart';
 import 'package:tcp_client/register/cubit/register_state.dart';
@@ -63,11 +64,16 @@ class RegisterPage extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Register Successed'))
               );
-              Future.delayed(const Duration(seconds: 1)).then((_) {
-                Navigator.of(context).pushReplacement(HomePage.route(
+              Future<int>(() async {
+                await Future.delayed(const Duration(seconds: 1));
+                var pref = await SharedPreferences.getInstance();
+                return pref.getInt('userid')!;
+              }).then((userID) {
+                Navigator.of(context).pushAndRemoveUntil(HomePage.route(
+                  userID: userID,
                   localServiceRepository: localServiceRepository,
                   tcpRepository: tcpRepository
-                ));
+                ), (route) => false);
               });
             }
           },

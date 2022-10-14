@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-13 23:02:55
+ * @LastEditTime : 2022-10-14 10:52:26
  * @Description  : 
  */
 
@@ -13,6 +13,7 @@ import 'package:tcp_client/home/view/contact_page/contact_page.dart';
 import 'package:tcp_client/home/view/contact_page/cubit/contact_cubit.dart';
 import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
 import 'package:tcp_client/home/view/message_page/mesage_page.dart';
+import 'package:tcp_client/home/view/profile_page/profile_page.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
 import 'package:tcp_client/repositories/user_repository/user_repository.dart';
@@ -20,18 +21,22 @@ import 'package:tcp_client/search/search_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
+    required this.userID,
     required this.localServiceRepository,
     required this.tcpRepository,
     super.key
   });
 
+  final int userID;
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
 
   static Route<void> route({
+    required int userID,
     required LocalServiceRepository localServiceRepository,
     required TCPRepository tcpRepository
   }) => MaterialPageRoute<void>(builder: (context) => HomePage(
+    userID: userID,
     localServiceRepository: localServiceRepository,
     tcpRepository: tcpRepository,
   ));
@@ -70,16 +75,20 @@ class HomePage extends StatelessWidget {
             ),
           )
         ],
-        child: HomePageView(),
+        child: HomePageView(userID: userID,),
       ),
     );
   }
 }
 
 class HomePageView extends StatelessWidget {
-  HomePageView({super.key});
+  HomePageView({
+    required this.userID,
+    super.key
+  });
 
   final PageController _controller = PageController();
+  final int userID;
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +131,10 @@ class HomePageView extends StatelessWidget {
             builder:(context, state) => PageView(
               controller: _controller,
               onPageChanged: (value) => context.read<HomeCubit>().switchPage(HomePagePosition.fromValue(value)),
-              children: const [
-                MessagePage(),
-                ContactPage()
+              children: [
+                const MessagePage(),
+                const ContactPage(),
+                MyProfilePage(userID: userID)
               ],
             ),
           ),

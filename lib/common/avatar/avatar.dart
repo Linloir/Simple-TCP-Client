@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:49:53
- * @LastEditTime : 2022-10-13 22:17:17
+ * @LastEditTime : 2022-10-14 10:32:50
  * @Description  : 
  */
 
@@ -14,9 +14,14 @@ import 'package:tcp_client/common/avatar/cubit/avatar_state.dart';
 import 'package:tcp_client/repositories/user_repository/user_repository.dart';
 
 class UserAvatar extends StatelessWidget {
-  const UserAvatar({required this.userid, super.key});
+  const UserAvatar({
+    required this.userid, 
+    this.size = 48,
+    super.key
+  });
 
   final int userid;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +33,18 @@ class UserAvatar extends StatelessWidget {
       builder: (context, state) {
         if(state.userInfo.avatarEncoded == null) {
           return Container(
+            width: size,
+            height: size,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.grey[800],
+              color: Colors.grey[600],
               borderRadius: BorderRadius.circular(5.0),
               boxShadow: [BoxShadow(blurRadius: 10.0, color: Colors.grey[850]!.withOpacity(0.15))]
             ),
             child: Text(
-              state.userInfo.userName[0],
+              state.userInfo.userName[0].toUpperCase(),
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24 * (size / 48),
                 fontWeight: FontWeight.w300,
                 color: Colors.white,
                 shadows: [Shadow(blurRadius: 5.0, color: Colors.white.withOpacity(0.15))]
@@ -47,6 +54,8 @@ class UserAvatar extends StatelessWidget {
         }
         else {
           return Container(
+            width: size,
+            height: size,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
               boxShadow: [BoxShadow(blurRadius: 10.0, color: Colors.grey[850]!.withOpacity(0.15))]

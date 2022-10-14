@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:18
- * @LastEditTime : 2022-10-13 22:59:10
+ * @LastEditTime : 2022-10-14 11:45:45
  * @Description  : 
  */
 
@@ -19,7 +19,6 @@ class MessagePage extends StatelessWidget {
     return BlocBuilder<MessageListCubit, MessageListState>(
       builder: (context, state) {
         return Container(
-          color: Colors.blue,
           child: ListView.separated(
             itemBuilder: (context, index) {
               return MessageTile(

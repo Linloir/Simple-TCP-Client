@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-12 23:35:10
+ * @LastEditTime : 2022-10-14 09:15:47
  * @Description  : TCP repository
  */
 
@@ -53,6 +53,13 @@ class TCPRepository {
       socket: socket, 
       remoteAddress: serverAddress, 
       remotePort: serverPort
+    );
+  }
+
+  Future<TCPRepository> clone() async {
+    return await TCPRepository.create(
+      serverAddress: _remoteAddress, 
+      serverPort: _remotePort
     );
   }
 

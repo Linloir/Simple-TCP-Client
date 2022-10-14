@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:02:19
- * @LastEditTime : 2022-10-12 13:25:49
+ * @LastEditTime : 2022-10-14 12:16:04
  * @Description  : 
  */
 
@@ -236,7 +236,11 @@ class FetchContactResponse extends TCPResponse {
   FetchContactResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    var body = jsonObject['body'] as Map<String, Object?>;
+    var body = jsonObject['body'] as Map<String, Object?>? ?? {
+      'contacts': [],
+      'pending': [],
+      'requesting': []
+    };
     var rawAddedContacts = body['contacts'] as List;
     var rawPendingContacts = body['pending'] as List;
     var rawRequestingContacts = body['requesting'] as List;

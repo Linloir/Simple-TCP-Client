@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 22:05:12
- * @LastEditTime : 2022-10-13 22:21:42
+ * @LastEditTime : 2022-10-14 12:10:46
  * @Description  : 
  */
 
@@ -15,11 +15,15 @@ class UserNameText extends StatelessWidget {
   const UserNameText({
     required this.userid,
     this.fontWeight = FontWeight.normal,
+    this.fontSize = 18,
+    this.alignment = Alignment.centerLeft,
     super.key
   });
 
   final int userid;
   final FontWeight fontWeight;
+  final double fontSize;
+  final Alignment alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +33,14 @@ class UserNameText extends StatelessWidget {
         userRepository: context.read<UserRepository>()
       ),
       builder: (context, state) {
-        return Text(
-          state.userInfo.userName,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: fontWeight
+        return Align(
+          alignment: alignment,
+          child: Text(
+            state.userInfo.userName,
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: fontWeight
+            ),
           ),
         );
       }

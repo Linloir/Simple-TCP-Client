@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:07
- * @LastEditTime : 2022-10-13 22:59:25
+ * @LastEditTime : 2022-10-14 11:45:35
  * @Description  : 
  */
 
@@ -19,7 +19,6 @@ class ContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green,
       child: BlocBuilder<ContactCubit, ContactState>(
         builder: (context, state) {
           return AzListView(

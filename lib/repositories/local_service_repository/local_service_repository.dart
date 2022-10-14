@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-12 15:35:30
+ * @LastEditTime : 2022-10-14 14:30:11
  * @Description  : Local Service Repository
  */
 
@@ -231,27 +231,29 @@ class LocalServiceRepository {
   Future<void> storeUserInfo({
     required UserInfo userInfo
   }) async {
-    //check if exist
-    var queryResult = await _database.query(
-      'users',
-      where: 'userid = ?',
-      whereArgs: [userInfo.userID]
-    );
-    if(queryResult.isEmpty) {
-      _database.insert(
+    await _database.transaction((txn) async {
+      //check if exist
+      var queryResult = await txn.query(
         'users',
-        userInfo.jsonObject
-      );
-    }
-    else {
-      _database.update(
-        'users',
-        userInfo.jsonObject,
         where: 'userid = ?',
         whereArgs: [userInfo.userID]
       );
-    }
-    _userInfoChangeStreamController.add(userInfo);
+      if(queryResult.isEmpty) {
+        txn.insert(
+          'users',
+          userInfo.jsonObject
+        );
+      }
+      else {
+        txn.update(
+          'users',
+          userInfo.jsonObject,
+          where: 'userid = ?',
+          whereArgs: [userInfo.userID]
+        );
+      }
+      _userInfoChangeStreamController.add(userInfo);
+    });
   }
 
   Future<UserInfo?> fetchUserInfoViaID({required int userid}) async {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 09:56:04
- * @LastEditTime : 2022-10-12 17:54:35
+ * @LastEditTime : 2022-10-14 14:24:11
  * @Description  : 
  */
 
@@ -22,6 +22,7 @@ class InitializationCubit extends Cubit<InitializationState> {
     TCPRepository? tcpRepository;
     LocalServiceRepository? localServiceRepository;
     Future(() async {
+      print('${(await getApplicationDocumentsDirectory()).path}/.data/database.db');
       localServiceRepository = await LocalServiceRepository.create(databaseFilePath: '${(await getApplicationDocumentsDirectory()).path}/.data/database.db');
     }).then((_) {
       emit(state.copyWith(

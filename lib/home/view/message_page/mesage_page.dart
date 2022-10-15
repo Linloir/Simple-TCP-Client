@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:18
- * @LastEditTime : 2022-10-14 11:45:45
+ * @LastEditTime : 2022-10-15 10:20:43
  * @Description  : 
  */
 
@@ -18,8 +18,7 @@ class MessagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MessageListCubit, MessageListState>(
       builder: (context, state) {
-        return Container(
-          child: ListView.separated(
+        return ListView.separated(
             itemBuilder: (context, index) {
               return MessageTile(
                 userID: state.messageList[index].targetUser,
@@ -32,8 +31,7 @@ class MessagePage extends StatelessWidget {
               );
             }, 
             itemCount: state.messageList.length
-          ),
-        );
+          );
       }
     );
   }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:30:05
- * @LastEditTime : 2022-10-11 23:35:45
+ * @LastEditTime : 2022-10-14 23:53:18
  * @Description  : 
  */
 
@@ -50,7 +50,7 @@ class Message extends JSONEncodable {
    _timestamp = DateTime.now().millisecondsSinceEpoch,
    _payload = payload {
     _contentmd5 = md5.convert(
-      utf8.encode(content)
+      utf8.encode(content).toList()
       ..addAll(Uint8List(4)..buffer.asInt32List()[0] = userid)
       ..addAll(Uint8List(4)..buffer.asInt32List()[0] = targetid)
       ..addAll(Uint8List(4)..buffer.asInt32List()[0] = _timestamp)
@@ -68,7 +68,7 @@ class Message extends JSONEncodable {
     _content = jsonObject['content'] as String,
     _timestamp = jsonObject['timestamp'] as int,
     _contentmd5 = jsonObject['md5encoded'] as String,
-    _filemd5 = jsonObject['filemd5'] as String,
+    _filemd5 = jsonObject['filemd5'] as String?,
     _payload = payload;
 
   int get senderID => _userid;
@@ -88,7 +88,7 @@ class Message extends JSONEncodable {
     'contenttype': _contenttype.literal,
     'content': _content,
     'timestamp': _timestamp,
-    'md5Encoded': _contentmd5,
+    'md5encoded': _contentmd5,
     'filemd5': payload?.filemd5
   };
 }

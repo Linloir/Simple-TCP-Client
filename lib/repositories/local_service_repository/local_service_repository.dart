@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-14 14:30:11
+ * @LastEditTime : 2022-10-15 11:48:54
  * @Description  : Local Service Repository
  */
 
@@ -40,7 +40,7 @@ class LocalServiceRepository {
           content     text not null,
           timestamp   int not null,
           md5encoded  text primary key,
-          filemd5     text not null
+          filemd5     text
         );
         create table files (
           filemd5     text primary key,
@@ -79,17 +79,15 @@ class LocalServiceRepository {
   }
 
   Future<void> storeMessages(List<Message> messages) async {
-    for(var message in messages) {
-      try {
-        await _database.insert(
+    await _database.transaction((txn) async {
+      for(var message in messages) {
+        await txn.insert(
           'msgs',
           message.jsonObject,
           conflictAlgorithm: ConflictAlgorithm.replace
         );
-      } catch (err) {
-        //TODO: do something
       }
-    }
+    });
   }
 
   Future<List<Message>> findMessages({required String pattern}) async {
@@ -216,13 +214,20 @@ class LocalServiceRepository {
     await Directory('$documentPath/files/.lib').create();
     var permanentFilePath = '$documentPath/files/.lib/${tempFile.filemd5}';
     await tempFile.file.copy(permanentFilePath);
-    await _database.insert(
-      'files',
-      {
-        'filemd5': tempFile.filemd5,
-        'dir': permanentFilePath
-      }
-    );
+    try{
+      await _database.insert(
+        'files',
+        {
+          'filemd5': tempFile.filemd5,
+          'dir': permanentFilePath
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace
+      );
+    } catch (err) {
+      print(err);
+    }
+    //Clear temp file
+    tempFile.file.delete();
   }
 
   final StreamController<UserInfo> _userInfoChangeStreamController = StreamController();
@@ -272,5 +277,21 @@ class LocalServiceRepository {
 
   Future<UserInfo?> fetchUserInfoViaUsername({required String username}) async {
     
+  }
+
+  Future<Message?> fetchMessage({required String msgmd5}) async {
+    var result = await _database.query(
+      'msgs',
+      where: 'md5encoded = ?',
+      whereArgs: [
+        msgmd5
+      ]
+    );
+    if(result.isNotEmpty) {
+      return Message.fromJSONObject(jsonObject: result[0]);
+    }
+    else {
+      return null;
+    }
   }
 }

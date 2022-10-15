@@ -1,15 +1,16 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-13 22:27:29
+ * @LastEditTime : 2022-10-15 10:29:05
  * @Description  : 
  */
+
+import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/view/message_page/cubit/msg_list_state.dart';
 import 'package:tcp_client/home/view/message_page/models/message_info.dart';
-import 'package:tcp_client/repositories/common_models/userinfo.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_response.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
@@ -19,11 +20,12 @@ class MessageListCubit extends Cubit<MessageListState> {
     required this.localServiceRepository,
     required this.tcpRepository
   }): super(MessageListState.empty()) {
-    tcpRepository.responseStreamBroadcast.listen(_onResponse);
+    subscription = tcpRepository.responseStreamBroadcast.listen(_onResponse);
   }
 
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
+  late final StreamSubscription subscription;
 
   void addEmptyMessageOf({required int targetUser}) {
     if(state.messageList.any((element) => element.targetUser == targetUser)) {
@@ -35,6 +37,20 @@ class MessageListCubit extends Cubit<MessageListState> {
 
   Future<void> _onResponse(TCPResponse response) async {
     switch(response.type) {
+      case TCPResponseType.sendMessage: {
+        response as SendMessageResponse;
+        if(response.status == TCPResponseStatus.ok) {
+          var message = await localServiceRepository.fetchMessage(msgmd5: response.md5encoded!);
+          if(message != null) {
+            var curUser = (await SharedPreferences.getInstance()).getInt('userid');
+            emit(state.updateWithSingle(messageInfo: MessageInfo(
+              message: message,
+              targetUser: message.senderID == curUser ? message.recieverID : message.senderID
+            )));
+          }
+        }
+        break;
+      }
       case TCPResponseType.fetchMessage: {
         response as FetchMessageResponse;
         Set<int> addedUserSet = {};
@@ -81,5 +97,11 @@ class MessageListCubit extends Cubit<MessageListState> {
       }
       default: break;
     }
+  }
+
+  @override
+  Future<void> close() {
+    subscription.cancel();
+    return super.close();
   }
 }

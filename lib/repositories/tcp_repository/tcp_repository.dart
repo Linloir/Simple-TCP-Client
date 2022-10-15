@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-14 09:15:47
+ * @LastEditTime : 2022-10-15 11:06:05
  * @Description  : TCP repository
  */
 
@@ -106,7 +106,7 @@ class TCPRepository {
             remotePort: _remotePort
           );
           duplicatedRepository._requestStreamController.add(request);
-          await for(var response in duplicatedRepository.responseStream) {
+          await for(var response in duplicatedRepository.responseStreamBroadcast) {
             if(response.type == TCPResponseType.sendMessage) {
               _responseStreamController.add(response);
               break;
@@ -114,6 +114,9 @@ class TCPRepository {
           }
           duplicatedRepository.dispose();
         });
+      }
+      else {
+        _requestStreamController.add(request);
       }
     }
     else {
@@ -333,8 +336,9 @@ class TCPRepository {
     return hasFile;
   }
 
-  void dispose() {
-    _socket.close();
+  void dispose() async {
+    await _socket.flush();
+    await _socket.close();
     _responseRawStreamController.close();
     _payloadPullStreamController.close();
     _payloadRawStreamController.close();

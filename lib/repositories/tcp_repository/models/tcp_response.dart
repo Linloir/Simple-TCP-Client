@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:02:19
- * @LastEditTime : 2022-10-14 12:16:04
+ * @LastEditTime : 2022-10-14 15:12:02
  * @Description  : 
  */
 
@@ -156,9 +156,15 @@ class ModifyProfileResponse extends TCPResponse {
 }
 
 class SendMessageResponse extends TCPResponse {
+  late final String? _md5encoded;
+  
   SendMessageResponse({
     required Map<String, Object?> jsonObject
-  }): super(jsonObject: jsonObject);
+  }): super(jsonObject: jsonObject) {
+    _md5encoded = jsonObject['body'] == null ? null : (jsonObject['body'] as Map<String, Object?>)['md5encoded'] as String?;
+  }
+
+  String? get md5encoded => _md5encoded;
 }
 
 class ForwardMessageResponse extends TCPResponse {

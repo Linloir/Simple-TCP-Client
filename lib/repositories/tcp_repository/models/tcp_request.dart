@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:44:03
- * @LastEditTime : 2022-10-13 23:04:49
+ * @LastEditTime : 2022-10-15 11:14:21
  * @Description  : Abstract TCP request class
  */
 
@@ -167,7 +167,7 @@ class SendMessageRequest extends TCPRequest {
     var jsonString = toJSON();
     var requestLength = jsonString.length;
     yield Uint8List(4)..buffer.asInt32List()[0] = requestLength;
-    yield Uint8List(4)..buffer.asInt32List()[0] = 0;
+    yield Uint8List(4)..buffer.asInt32List()[0] =  (await _message.payload?.file.length()) ?? 0;
     yield Uint8List.fromList(jsonString.codeUnits);
     if(_message.payload != null) {
       var fileStream = _message.payload!.file.openRead();

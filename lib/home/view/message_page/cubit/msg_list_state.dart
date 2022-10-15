@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:37:49
- * @LastEditTime : 2022-10-13 22:24:22
+ * @LastEditTime : 2022-10-15 00:55:49
  * @Description  : 
  */
 
@@ -104,5 +104,5 @@ class MessageListState extends Equatable {
   }
 
   @override
-  List<Object> get props => [messageList];
+  List<Object> get props => [...messageList];
 }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:48:54
- * @LastEditTime : 2022-10-13 22:24:01
+ * @LastEditTime : 2022-10-15 01:01:48
  * @Description  : 
  */
 
@@ -19,5 +19,5 @@ class MessageInfo extends Equatable {
   });
 
   @override
-  List<Object?> get props => [message?.contentmd5, targetUser];
+  List<Object> get props => [message?.contentmd5 ?? '', targetUser];
 }

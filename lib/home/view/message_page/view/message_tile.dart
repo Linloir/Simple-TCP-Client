@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-14 12:07:32
+ * @LastEditTime : 2022-10-15 01:05:11
  * @Description  : 
  */
 
@@ -88,18 +88,20 @@ class MessageTile extends StatelessWidget {
                 const SizedBox(width: 16,),
                 Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const SizedBox(height: 6,),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
+                          vertical: 2.0,
                           horizontal: 0
                         ),
                         child: UserNameText(userid: userID, fontWeight: FontWeight.bold,)
                       ),
-                      const Spacer(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 4.0
+                          vertical: 2.0
                         ),
                         child: Text(
                           message?.contentDecoded ?? '',
@@ -107,7 +109,8 @@ class MessageTile extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                      )
+                      ),
+                      const SizedBox(height: 6,),
                     ],
                   ),
                 ),
@@ -138,7 +141,7 @@ class MessageTile extends StatelessWidget {
     var weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     //If date is today, return time
     if(date.day == DateTime.now().day) {
-      return '${date.hour}:${date.minute}';
+      return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     }
     //If date is yesterday, return 'yesterday'
     if(date.day == DateTime.now().day - 1) {

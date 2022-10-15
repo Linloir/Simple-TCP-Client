@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:01:45
- * @LastEditTime : 2022-10-14 11:49:50
+ * @LastEditTime : 2022-10-14 23:03:02
  * @Description  : 
  */
 
@@ -22,7 +22,7 @@ class ContactCubit extends Cubit<ContactState> {
   }): super(ContactState.empty()) {
     subscription = tcpRepository.responseStreamBroadcast.listen(_onResponse);
     updateContacts();
-    timer = Timer.periodic(const Duration(seconds: 5), (timer) {updateContacts();});
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {updateContacts();});
   }
 
   final LocalServiceRepository localServiceRepository;

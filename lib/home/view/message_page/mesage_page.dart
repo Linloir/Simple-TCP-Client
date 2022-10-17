@@ -1,24 +1,34 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:18
- * @LastEditTime : 2022-10-15 10:20:43
+ * @LastEditTime : 2022-10-17 13:35:35
  * @Description  : 
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
 import 'package:tcp_client/home/view/message_page/cubit/msg_list_state.dart';
 import 'package:tcp_client/home/view/message_page/view/message_tile.dart';
 
 class MessagePage extends StatelessWidget {
-  const MessagePage({super.key});
+  MessagePage({super.key});
+
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessageListCubit, MessageListState>(
       builder: (context, state) {
-        return ListView.separated(
+        return SmartRefresher(
+          controller: _refreshController,
+          onRefresh: () async {
+            await context.read<MessageListCubit>().refresh();
+            _refreshController.refreshCompleted();
+          },
+          child: ListView.separated(
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             itemBuilder: (context, index) {
               return MessageTile(
                 userID: state.messageList[index].targetUser,
@@ -31,7 +41,8 @@ class MessagePage extends StatelessWidget {
               );
             }, 
             itemCount: state.messageList.length
-          );
+          ),
+        );
       }
     );
   }

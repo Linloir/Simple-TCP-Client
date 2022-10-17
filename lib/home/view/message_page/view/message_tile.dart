@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-15 01:05:11
+ * @LastEditTime : 2022-10-17 17:18:22
  * @Description  : 
  */
 
@@ -53,7 +53,9 @@ class MessageTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                UserAvatar(userid: userID),
+                IgnorePointer(
+                  child: UserAvatar(userid: userID),
+                ),
                 // if(userInfo.avatarEncoded != null && userInfo.avatarEncoded!.isEmpty) 
                 //   Container(
                 //     decoration: BoxDecoration(
@@ -97,16 +99,20 @@ class MessageTile extends StatelessWidget {
                           vertical: 2.0,
                           horizontal: 0
                         ),
-                        child: UserNameText(userid: userID, fontWeight: FontWeight.bold,)
+                        child: IgnorePointer(
+                          child: UserNameText(userid: userID, fontWeight: FontWeight.bold,),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           vertical: 2.0
                         ),
-                        child: Text(
-                          message?.contentDecoded ?? '',
-                          style: const TextStyle(
-                            fontSize: 16,
+                        child: IgnorePointer(
+                          child: Text(
+                            message?.contentDecoded ?? '',
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -122,8 +128,10 @@ class MessageTile extends StatelessWidget {
                     ),
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: Text(
-                        getTimeStamp(message!.timeStamp)
+                      child: IgnorePointer(
+                        child: Text(
+                          getTimeStamp(message!.timeStamp)
+                        ),
                       ),
                     ),
                   ),

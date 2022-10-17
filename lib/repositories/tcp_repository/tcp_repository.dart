@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-15 11:06:05
+ * @LastEditTime : 2022-10-15 16:50:16
  * @Description  : TCP repository
  */
 
@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:async/async.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
@@ -138,15 +139,17 @@ class TCPRepository {
           payloadLength = Uint8List.fromList(buffer.sublist(4, 8)).buffer.asInt32List()[0];
           //Clear the length indicator bytes
           buffer.removeRange(0, 8);
-          //Create temp file to read payload (might be huge)
-          Directory('${Directory.current.path}/.tmp').createSync();
           //Create a pull stream for payload file
           _payloadPullStreamController = StreamController();
           //Create a future that listens to the status of the payload transmission
           () {
             var payloadPullStream = _payloadPullStreamController.stream;
-            var tempFile = File('${Directory.current.path}/.tmp/${DateTime.now().microsecondsSinceEpoch}')..createSync();
             Future(() async {
+              var documentDirectory = await getApplicationDocumentsDirectory();
+              //Create temp file to read payload (might be huge)
+              Directory('${documentDirectory.path}/ChatClient').createSync();
+              Directory('${documentDirectory.path}/ChatClient/.tmp').createSync();
+              var tempFile = File('${documentDirectory.path}/ChatClient/.tmp/${DateTime.now().microsecondsSinceEpoch}')..createSync();
               await for(var data in payloadPullStream) {
                 await tempFile.writeAsBytes(data, mode: FileMode.append, flush: true);
               }

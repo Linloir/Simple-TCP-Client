@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-15 11:48:54
+ * @LastEditTime : 2022-10-17 13:01:35
  * @Description  : Local Service Repository
  */
 
@@ -15,8 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/common_models/userinfo.dart';
 import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
+//Windows platform
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+//Android platform
+// import 'package:sqflite/sqflite.dart';
 
 class LocalServiceRepository {
   late final Database _database;
@@ -26,13 +29,18 @@ class LocalServiceRepository {
   }): _database = database;
 
   static FutureOr<void> _onDatabaseCreate(Database db, int version) async {
-    await db.execute(
+    await db.transaction((txn) async {
+      await txn.execute(
       '''
         create table users (
           userid    integer primary key,
           username  text not null,
           avatar    text
         );
+      '''
+      );
+      await txn.execute(
+      '''
         create table msgs (
           userid      integer not null,
           targetid    integer not null,
@@ -42,18 +50,46 @@ class LocalServiceRepository {
           md5encoded  text primary key,
           filemd5     text
         );
+      '''
+      );
+      await txn.execute(
+      '''
         create table files (
           filemd5     text primary key,
           dir         text not null
         );
       '''
-    );
+      );
+    });
+    // await db.execute(
+    //   '''
+    //     create table msgs (
+    //       userid      integer not null,
+    //       targetid    integer not null,
+    //       contenttype text not null,
+    //       content     text not null,
+    //       timestamp   int not null,
+    //       md5encoded  text primary key,
+    //       filemd5     text
+    //     );
+    //     create table users (
+    //       userid    integer primary key,
+    //       username  text not null,
+    //       avatar    text
+    //     );
+    //     create table files (
+    //       filemd5     text primary key,
+    //       dir         text not null
+    //     );
+    //   '''
+    // );
   }
 
   static Future<LocalServiceRepository> create({
     UserInfo? currentUser,
     required String databaseFilePath
   }) async {
+    //Windows platform
     var database = await databaseFactoryFfi.openDatabase(
       databaseFilePath,
       options: OpenDatabaseOptions(
@@ -61,6 +97,12 @@ class LocalServiceRepository {
         onCreate: _onDatabaseCreate
       )
     );
+    //Android platform
+    // var database = await openDatabase(
+    //   databaseFilePath,
+    //   version: 1,
+    //   onCreate: _onDatabaseCreate
+    // );
     return LocalServiceRepository._internal(database: database);
   }
 

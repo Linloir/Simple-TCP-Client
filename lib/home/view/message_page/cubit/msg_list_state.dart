@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:37:49
- * @LastEditTime : 2022-10-15 00:55:49
+ * @LastEditTime : 2022-10-17 13:10:49
  * @Description  : 
  */
 
@@ -78,12 +78,12 @@ class MessageListState extends Equatable {
     }
     while(insertListIndex < orderedNewMessages.length) {
       if(addedUsers.contains(orderedNewMessages[insertListIndex].targetUser)) {
-        origListIndex += 1;
+        insertListIndex += 1;
         continue;
       }
       newList.add(orderedNewMessages[insertListIndex]);
       addedUsers.add(orderedNewMessages[insertListIndex].targetUser);
-      origListIndex += 1;
+      insertListIndex += 1;
       continue;
     }
     

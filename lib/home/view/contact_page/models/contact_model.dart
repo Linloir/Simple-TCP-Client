@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 15:34:08
- * @LastEditTime : 2022-10-13 15:41:24
+ * @LastEditTime : 2022-10-17 17:20:47
  * @Description  : 
  */
 
@@ -17,7 +17,7 @@ class ContactModel extends ISuspensionBean {
   @override
   String getSuspensionTag() {
     var pinyin = PinyinHelper.getPinyinE(userInfo.userName);
-    var tag = pinyin.substring(0, 1);
+    var tag = pinyin.substring(0, 1).toUpperCase();
     if(!RegExp('[A-Z]').hasMatch(tag)) {
       tag = '#';
     }

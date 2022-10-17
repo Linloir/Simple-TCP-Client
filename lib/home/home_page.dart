@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-14 15:57:30
+ * @LastEditTime : 2022-10-17 16:57:57
  * @Description  : 
  */
 
@@ -72,7 +72,8 @@ class HomePage extends StatelessWidget {
           BlocProvider<HomeCubit>(
             create: (context) => HomeCubit(
               localServiceRepository: localServiceRepository,
-              tcpRepository: tcpRepository
+              tcpRepository: tcpRepository,
+              pageController: PageController()
             ),
           )
         ],
@@ -83,64 +84,75 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageView extends StatelessWidget {
-  HomePageView({
+  const HomePageView({
     required this.userID,
     super.key
   });
 
-  final PageController _controller = PageController();
   final int userID;
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<HomeCubit, HomeState>(
-      listenWhen:(previous, current) => current.page != previous.page,
-      listener: (context, state) {
-        _controller.animateToPage(
-          state.page.value, 
-          duration: const Duration(milliseconds: 375), 
-          curve: Curves.easeInOutCubicEmphasized
-        );
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
-              return Text(
-                state.page.literal,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold
-                ),
-              );
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search_rounded),
-              onPressed: () {
-                Navigator.of(context).push(SearchPage.route(
-                  localServiceRepository: context.read<LocalServiceRepository>(), 
-                  tcpRepository: context.read<TCPRepository>(), 
-                  userRepository: context.read<UserRepository>()
-                ));
-              },
-            )
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            return Text(
+              state.page.literal,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold
+              ),
+            );
+          },
         ),
-        body: Center(
-          child: BlocBuilder<HomeCubit, HomeState>(
-            builder:(context, state) => PageView(
-              controller: _controller,
-              onPageChanged: (value) => context.read<HomeCubit>().switchPage(HomePagePosition.fromValue(value)),
-              children: [
-                const MessagePage(),
-                const ContactPage(),
-                MyProfilePage(userID: userID)
-              ],
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search_rounded),
+            onPressed: () {
+              Navigator.of(context).push(SearchPage.route(
+                localServiceRepository: context.read<LocalServiceRepository>(), 
+                tcpRepository: context.read<TCPRepository>(), 
+                userRepository: context.read<UserRepository>()
+              ));
+            },
+          )
+        ],
+      ),
+      body: Center(
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder:(context, state) => PageView(
+            controller: context.read<HomeCubit>().pageController,
+            children: [
+              MessagePage(),
+              const ContactPage(),
+              MyProfilePage(userID: userID)
+            ],
           ),
         ),
       ),
+      bottomNavigationBar: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) => BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.message_rounded),
+              icon: Icon(Icons.message_outlined),
+              label: 'Message'
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.contacts_rounded),
+              icon: Icon(Icons.contacts_outlined),
+              label: 'Contacts'
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.person_rounded),
+              icon: Icon(Icons.person_outline_rounded),
+              label: 'Me'
+            ),
+          ],
+          currentIndex: state.page.value,
+          onTap: (value) => context.read<HomeCubit>().switchPage(HomePagePosition.fromValue(value))
+        ),
+      )
     );
   }
 }

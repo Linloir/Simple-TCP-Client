@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:02:00
- * @LastEditTime : 2022-10-14 11:59:48
+ * @LastEditTime : 2022-10-17 17:19:50
  * @Description  : 
  */
 
@@ -53,14 +53,18 @@ class ContactTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                UserAvatar(userid: userInfo.userID),
+                IgnorePointer(
+                  child: UserAvatar(userid: userInfo.userID),
+                ),
                 const SizedBox(width: 12,),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 12.0
                     ),
-                    child: UserNameText(userid: userInfo.userID,)
+                    child: IgnorePointer(
+                      child: UserNameText(userid: userInfo.userID,)
+                    ),
                   )
                 ),
               ],

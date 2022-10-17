@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:07
- * @LastEditTime : 2022-10-14 11:45:35
+ * @LastEditTime : 2022-10-17 17:35:05
  * @Description  : 
  */
 
@@ -21,15 +21,16 @@ class ContactPage extends StatelessWidget {
     return Container(
       child: BlocBuilder<ContactCubit, ContactState>(
         builder: (context, state) {
+          var indexedData = state.indexedData;
           return AzListView(
-            data: state.indexedData,
-            itemCount: state.contacts.length,
+            data: indexedData,
+            itemCount: indexedData.length,
             itemBuilder: (context, index) {
               return ContactTile(
-                userInfo: state.contacts[index],
+                userInfo: (indexedData[index] as ContactModel).userInfo,
               );
             },
-            physics: const BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             susItemBuilder: (context, index) {
               return Container(
                 height: 40,
@@ -38,7 +39,7 @@ class ContactPage extends StatelessWidget {
                 color: Colors.grey[200],
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  ContactModel(userInfo: state.contacts[index]).getSuspensionTag(),
+                  indexedData[index].getSuspensionTag(),
                   softWrap: false,
                   style: TextStyle(
                     fontSize: 14.0,

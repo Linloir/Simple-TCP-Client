@@ -33,6 +33,7 @@ dependencies:
     sdk: flutter
 
   path_provider: ^2.0.11
+  sqflite: ^2.1.0+1
   sqflite_common_ffi: ^2.1.1+1
   sqflite_common: ^2.3.0
   crypto: ^3.0.2
@@ -50,7 +51,7 @@ dependencies:
   async: ^2.9.0
   stream_transform: ^2.0.1
   flutter_slidable: ^2.0.0
-  pull_to_refresh: ^2.0.0
+  pull_to_refresh_flutter3: ^2.0.1
   azlistview: ^2.0.0
   lpinyin: ^2.0.3
   easy_debounce: ^2.0.2+1

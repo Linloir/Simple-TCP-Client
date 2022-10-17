@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-15 10:29:05
+ * @LastEditTime : 2022-10-17 17:15:12
  * @Description  : 
  */
 
@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/view/message_page/cubit/msg_list_state.dart';
 import 'package:tcp_client/home/view/message_page/models/message_info.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
+import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_response.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
 
@@ -21,18 +22,50 @@ class MessageListCubit extends Cubit<MessageListState> {
     required this.tcpRepository
   }): super(MessageListState.empty()) {
     subscription = tcpRepository.responseStreamBroadcast.listen(_onResponse);
+    Future<List<MessageInfo>>(() async {
+      var pref = await SharedPreferences.getInstance();
+      var userID = pref.getInt('userid');
+      var msgUserList = pref.getStringList('${userID}msg');
+      List<MessageInfo> msgList = [];
+      if(msgUserList != null) {
+        for(var user in msgUserList) {
+          var targetUserID = int.parse(user);
+          var history = await localServiceRepository.fetchMessageHistory(userID: targetUserID, position: 0, num: 1);
+          if(history.isEmpty) {
+            msgList.add(MessageInfo(targetUser: targetUserID));
+          }
+          else {
+            msgList.add(MessageInfo(targetUser: targetUserID, message: history[0]));
+          }
+        }
+      }
+      return msgList;
+    }).then((msgList) => emit(state.updateWithList(orderedNewMessages: msgList)))
+      .then((_) async => tcpRepository.pushRequest(FetchMessageRequest(
+        token: (await SharedPreferences.getInstance()).getInt('token'))
+      ));
   }
 
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
   late final StreamSubscription subscription;
 
-  void addEmptyMessageOf({required int targetUser}) {
+  void addEmptyMessageOf({required int targetUser}) async {
     if(state.messageList.any((element) => element.targetUser == targetUser)) {
       return;
     }
-    var newList = [MessageInfo(targetUser: targetUser)];
-    emit(MessageListState(messageList: newList..addAll(state.messageList)));
+    var newList = [MessageInfo(targetUser: targetUser), ...state.messageList];
+    emit(MessageListState(messageList: newList));
+    var pref = await SharedPreferences.getInstance();
+    var currentUserID = pref.getInt('userid');
+    var msgUserList = pref.getStringList('${currentUserID}msg') ?? [];
+    msgUserList.remove('$targetUser');
+    msgUserList.insert(0, '$targetUser');
+    pref.setStringList('${currentUserID}msg', msgUserList);
+  }
+  
+  Future<void> refresh() async {
+    tcpRepository.pushRequest(FetchMessageRequest(token: (await SharedPreferences.getInstance()).getInt('token')));
   }
 
   Future<void> _onResponse(TCPResponse response) async {
@@ -42,10 +75,12 @@ class MessageListCubit extends Cubit<MessageListState> {
         if(response.status == TCPResponseStatus.ok) {
           var message = await localServiceRepository.fetchMessage(msgmd5: response.md5encoded!);
           if(message != null) {
-            var curUser = (await SharedPreferences.getInstance()).getInt('userid');
+            var pref = await SharedPreferences.getInstance();
+            var currentUserID = pref.getInt('userid');
+            var targetUser = message.senderID == currentUserID ? message.recieverID : message.senderID;
             emit(state.updateWithSingle(messageInfo: MessageInfo(
               message: message,
-              targetUser: message.senderID == curUser ? message.recieverID : message.senderID
+              targetUser: targetUser
             )));
           }
         }
@@ -76,6 +111,9 @@ class MessageListCubit extends Cubit<MessageListState> {
 
         //Use the meessage list to create new state
         emit(state.updateWithList(orderedNewMessages: latestMessages));
+        
+        var msgUserList = state.messageList.map((e) => e.targetUser.toString()).toList();
+        pref.setStringList('${curUser}msg', msgUserList);
 
         break;
       }
@@ -93,6 +131,10 @@ class MessageListCubit extends Cubit<MessageListState> {
             message: response.message
           )
         ));
+        var msgUserList = pref.getStringList('${curUser}msg') ?? [];
+        msgUserList.remove('$targetUser');
+        msgUserList.insert(0, '$targetUser');
+        pref.setStringList('${curUser}msg', msgUserList);
         break;
       }
       default: break;

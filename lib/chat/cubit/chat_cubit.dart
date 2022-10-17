@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-15 11:45:04
+ * @LastEditTime : 2022-10-17 17:43:55
  * @Description  : 
  */
 
@@ -107,13 +107,13 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   Future<void> fetchFile({required String messageMd5}) async {
-    var newHistory = [...state.chatHistory];
-    var index = newHistory.indexWhere((e) => e.message.contentmd5 == messageMd5);
-    if(index != -1) {
-      newHistory[index] = newHistory[index].copyWith(
-        status: ChatHistoryStatus.done
-      );
-    }
+    // var newHistory = [...state.chatHistory];
+    // var index = newHistory.indexWhere((e) => e.message.contentmd5 == messageMd5);
+    // if(index != -1) {
+    //   newHistory[index] = newHistory[index].copyWith(
+    //     status: ChatHistoryStatus.done
+    //   );
+    // }
     var clonedTCPRepository = await tcpRepository.clone();
     clonedTCPRepository.pushRequest(FetchFileRequest(
       msgmd5: messageMd5, 
@@ -147,6 +147,7 @@ class ChatCubit extends Cubit<ChatState> {
           }
           emit(state.copyWith(chatHistory: newHistory));
         }
+        clonedTCPRepository.dispose();
       }
     });
     fileFetchSubscriptionMap.addEntries([MapEntry(messageMd5, subscription)]);

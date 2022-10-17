@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:01:39
- * @LastEditTime : 2022-10-13 15:51:23
+ * @LastEditTime : 2022-10-17 17:28:33
  * @Description  : 
  */
 
@@ -25,7 +25,8 @@ class ContactState extends Equatable {
 
   List<ISuspensionBean> get indexedData {
     var indexedList = contacts.map((e) => ContactModel(userInfo: e)).toList();
-    SuspensionUtil.sortListBySuspensionTag(indexedList);
+    indexedList.sort((a, b) => a.getSuspensionTag().compareTo(b.getSuspensionTag()));
+    // SuspensionUtil.sortListBySuspensionTag(indexedList);
     SuspensionUtil.setShowSuspensionStatus(indexedList);
     return indexedList;
   }

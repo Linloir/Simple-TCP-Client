@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 21:57:05
- * @LastEditTime : 2022-10-18 11:25:09
+ * @LastEditTime : 2022-10-18 15:30:09
  * @Description  : 
  */
 
@@ -33,7 +33,6 @@ class MessageInputCubit extends Cubit<MessageInputState> {
       targetid: chatCubit.userID,
       contenttype: MessageType.plaintext,
       content: state.input.value,
-      token: (await SharedPreferences.getInstance()).getInt('token')!
     ));
     emit(state.copyWith(
       status: FormzStatus.pure,

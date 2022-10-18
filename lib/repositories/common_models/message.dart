@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:30:05
- * @LastEditTime : 2022-10-18 14:20:02
+ * @LastEditTime : 2022-10-18 16:53:04
  * @Description  : 
  */
 
@@ -35,13 +35,31 @@ class Message extends JSONEncodable {
   late final String? _filemd5;
   final LocalFile? _payload;
 
+  Message._internal({
+    required int userid,
+    required int targetid,
+    required MessageType contenttype,
+    required String content,
+    required int timestamp,
+    required String contentmd5,
+    required String? filemd5,
+    required LocalFile? payload
+  }): 
+    _userid = userid,
+    _targetid = targetid,
+    _contenttype = contenttype,
+    _content = content,
+    _timestamp = timestamp,
+    _contentmd5 = contentmd5,
+    _filemd5 = filemd5,
+    _payload = payload;
+
   Message({
     required int userid,
     required int targetid,
     required MessageType contenttype,
     required String content,
-    LocalFile? payload,
-    required int token
+    LocalFile? payload
   }):
    _userid = userid,
    _targetid = targetid,
@@ -70,6 +88,32 @@ class Message extends JSONEncodable {
     _contentmd5 = jsonObject['md5encoded'] as String,
     _filemd5 = jsonObject['filemd5'] as String?,
     _payload = payload;
+  
+  Message copyWith({
+    int? userid,
+    int? targetid,
+    MessageType? contenttype,
+    String? content,
+    int? timestamp,
+    LocalFile? payload
+  }) {
+    return Message._internal(
+      userid: userid ?? _userid,
+      targetid: targetid ?? _targetid,
+      contenttype: contenttype ?? _contenttype,
+      content: content == null ? _content : base64.encode(utf8.encode(content)),
+      timestamp: timestamp ?? _timestamp,
+      contentmd5: content != null || userid != null || targetid != null ?
+                    md5.convert(
+                      utf8.encode(content ?? contentDecoded).toList()
+                      ..addAll(Uint8List(4)..buffer.asInt32List()[0] = userid ?? _userid)
+                      ..addAll(Uint8List(4)..buffer.asInt32List()[0] = targetid ?? _targetid)
+                      ..addAll(Uint8List(4)..buffer.asInt32List()[0] = timestamp ?? _timestamp)
+                    ).toString() : _contentmd5,
+      filemd5: payload?.filemd5 ?? _filemd5,
+      payload: payload ?? _payload
+    );
+  }
 
   int get senderID => _userid;
   int get recieverID => _targetid;

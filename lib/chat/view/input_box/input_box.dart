@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:54:30
- * @LastEditTime : 2022-10-18 11:25:12
+ * @LastEditTime : 2022-10-18 15:30:05
  * @Description  : 
  */
 
@@ -16,6 +16,7 @@ import 'package:tcp_client/chat/view/input_box/cubit/input_cubit.dart';
 import 'package:tcp_client/chat/view/input_box/cubit/input_state.dart';
 import 'package:tcp_client/chat/view/input_box/model/input.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
+import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 
 class InputBox extends StatelessWidget {
   InputBox({super.key});
@@ -71,10 +72,9 @@ class InputBox extends StatelessWidget {
                     var newMessage = Message(
                       userid: (await SharedPreferences.getInstance()).getInt('userid')!,
                       targetid: chatCubit.userID,
-                      content: basename(file.file.path),
+                      content: basename(file.path),
                       contenttype: MessageType.file,
-                      payload: file,
-                      token: (await SharedPreferences.getInstance()).getInt('token')!
+                      payload: LocalFile(file: file, filemd5: ""),
                     );
                     chatCubit.addMessage(newMessage);
                   }

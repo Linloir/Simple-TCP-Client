@@ -1,19 +1,24 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-18 11:25:04
+ * @LastEditTime : 2022-10-18 17:09:55
  * @Description  : 
  */
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/chat/cubit/chat_state.dart';
 import 'package:tcp_client/chat/model/chat_history.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
+import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_response.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
@@ -34,23 +39,63 @@ class ChatCubit extends Cubit<ChatState> {
   final Map<String, StreamSubscription> messageSendSubscriptionMap = {};
   final Map<String, StreamSubscription> fileFetchSubscriptionMap = {};
 
+  
+
   Future<void> addMessage(Message message) async {
+    var msg = message;
+    if(msg.type == MessageType.file) {
+      //wait until md5 is converted
+      //Emit new state
+      var newHistory = ChatHistory(
+        message: msg,
+        type: ChatHistoryType.outcome,
+        status: ChatHistoryStatus.processing
+      );
+      var newHistoryList = [newHistory, ...state.chatHistory];
+      emit(state.copyWith(chatHistory: newHistoryList));
+      var file = msg.payload!.file;
+      var md5Output = AccumulatorSink<Digest>();
+      ByteConversionSink md5Input = md5.startChunkedConversion(md5Output);
+      await for(var bytes in file.openRead()) {
+        md5Input.add(bytes);
+      }
+      md5Input.close();
+      var loadedFile = LocalFile(
+        file: file, 
+        filemd5: md5Output.events.single.toString()
+      );
+      msg = msg.copyWith(
+        payload: loadedFile
+      );
+    }
     //Store locally
-    localServiceRepository.storeMessages([message]);
+    localServiceRepository.storeMessages([msg]);
     //Send to server
     tcpRepository.pushRequest(SendMessageRequest(
-      message: message, 
+      message: msg, 
       token: (await SharedPreferences.getInstance()).getInt('token')
     ));
     //Emit new state
     var newHistory = ChatHistory(
-      message: message,
+      message: msg,
       type: ChatHistoryType.outcome,
       status: ChatHistoryStatus.sending
     );
-    var newHistoryList = [newHistory, ...state.chatHistory];
-    emit(state.copyWith(chatHistory: newHistoryList));
-    _bindSubscriptionForSending(messageMd5: message.contentmd5);
+    if(msg.type == MessageType.file) {
+      //Remove mock history
+      var newHistoryList = [...state.chatHistory];
+      var index = newHistoryList.indexWhere((element) => element.message.contentmd5 == msg.contentmd5);
+      if(index == -1) {
+        return;
+      }
+      newHistoryList[index] = newHistory;
+      emit(state.copyWith(chatHistory: newHistoryList));
+    }
+    else {
+      var newHistoryList = [newHistory, ...state.chatHistory];
+      emit(state.copyWith(chatHistory: newHistoryList));
+    }
+    _bindSubscriptionForSending(messageMd5: msg.contentmd5);
   }
 
   Future<void> fetchHistory() async {

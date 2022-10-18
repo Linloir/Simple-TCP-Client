@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-18 14:35:25
+ * @LastEditTime : 2022-10-18 15:13:27
  * @Description  : Local Service Repository
  */
 
@@ -109,23 +109,24 @@ class LocalServiceRepository {
   }
 
   //Calls on the system to open the file
-  Future<LocalFile?> pickFile(FileType fileType) async {
+  Future<File?> pickFile(FileType fileType) async {
     var filePickResult = await FilePicker.platform.pickFiles(
       type: fileType,
       allowMultiple: false,
     );
     if (filePickResult == null) return null;
     var file = File(filePickResult.files.single.path!);
-    var md5Output = AccumulatorSink<Digest>();
-    ByteConversionSink md5Input = md5.startChunkedConversion(md5Output);
-    await for(var bytes in file.openRead()) {
-      md5Input.add(bytes);
-    }
-    md5Input.close();
-    return LocalFile(
-      file: file, 
-      filemd5: md5Output.events.single.toString()
-    );
+    // var md5Output = AccumulatorSink<Digest>();
+    // ByteConversionSink md5Input = md5.startChunkedConversion(md5Output);
+    // await for(var bytes in file.openRead()) {
+    //   md5Input.add(bytes);
+    // }
+    // md5Input.close();
+    // return LocalFile(
+    //   file: file, 
+    //   filemd5: md5Output.events.single.toString()
+    // );
+    return file;
   }
 
   Future<void> storeMessages(List<Message> messages) async {

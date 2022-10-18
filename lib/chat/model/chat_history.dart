@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 14:55:20
- * @LastEditTime : 2022-10-14 15:26:25
+ * @LastEditTime : 2022-10-18 15:19:46
  * @Description  : 
  */
 
@@ -9,7 +9,7 @@ import 'package:equatable/equatable.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 
 enum ChatHistoryType { outcome, income }
-enum ChatHistoryStatus { none, sending, downloading, done, failed }
+enum ChatHistoryStatus { none, processing, sending, downloading, done, failed }
 
 class ChatHistory extends Equatable {
   final Message message;

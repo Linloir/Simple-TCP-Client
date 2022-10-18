@@ -1,13 +1,14 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:07:13
- * @LastEditTime : 2022-10-15 11:40:47
+ * @LastEditTime : 2022-10-18 15:44:34
  * @Description  : 
  */
 
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:tcp_client/chat/cubit/chat_cubit.dart';
 import 'package:tcp_client/chat/model/chat_history.dart';
 
@@ -22,7 +23,7 @@ class FileBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (history.status == ChatHistoryStatus.downloading || history.status == ChatHistoryStatus.sending) ? null : () {
+      onTap: (history.status == ChatHistoryStatus.downloading || history.status == ChatHistoryStatus.sending || history.status == ChatHistoryStatus.processing) ? null : () {
         EasyDebounce.debounce(
           'findfile${history.message.contentmd5}',
           const Duration(milliseconds: 500),
@@ -49,7 +50,15 @@ class FileBox extends StatelessWidget {
                   Icons.refresh_rounded,
                   size: 24,
                   color: history.type == ChatHistoryType.income ? Colors.red[800] : Colors.white.withOpacity(0.8),
-                ) :
+                ) : history.status == ChatHistoryStatus.processing ? 
+                SizedBox(
+                  height: 18.0,
+                  width: 18.0,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseSync,
+                    colors: [Colors.white.withOpacity(0.8)],
+                  ),
+                ) : 
                 SizedBox(
                   height: 18.0,
                   width: 18.0,

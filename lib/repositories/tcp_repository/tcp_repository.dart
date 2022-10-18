@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-18 14:50:33
+ * @LastEditTime : 2022-10-19 00:57:05
  * @Description  : TCP repository
  */
 
@@ -29,6 +29,7 @@ class TCPRepository {
       try{
         await for(var response in _socket) {
           _pullResponse(response);
+          await Future.delayed(const Duration(microseconds: 0));
         }
       } catch(e) {
         _socket.close();

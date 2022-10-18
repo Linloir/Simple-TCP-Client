@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 10:54:57
- * @LastEditTime : 2022-10-14 11:44:12
+ * @LastEditTime : 2022-10-17 20:51:45
  * @Description  : 
  */
 
@@ -36,6 +36,7 @@ class LogOutCubit extends Cubit<LogOutStatus> {
   }
 
   void onLogout() async {
+    emit(LogOutStatus.processing);
     tcpRepository.pushRequest(LogoutRequest(token: (await SharedPreferences.getInstance()).getInt('token')));
   }
 

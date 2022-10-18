@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:07
- * @LastEditTime : 2022-10-17 17:35:05
+ * @LastEditTime : 2022-10-18 11:25:18
  * @Description  : 
  */
 
@@ -18,39 +18,37 @@ class ContactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BlocBuilder<ContactCubit, ContactState>(
-        builder: (context, state) {
-          var indexedData = state.indexedData;
-          return AzListView(
-            data: indexedData,
-            itemCount: indexedData.length,
-            itemBuilder: (context, index) {
-              return ContactTile(
-                userInfo: (indexedData[index] as ContactModel).userInfo,
-              );
-            },
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            susItemBuilder: (context, index) {
-              return Container(
-                height: 40,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 16.0),
-                color: Colors.grey[200],
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  indexedData[index].getSuspensionTag(),
-                  softWrap: false,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey[700],
-                  ),
+    return BlocBuilder<ContactCubit, ContactState>(
+      builder: (context, state) {
+        var indexedData = state.indexedData;
+        return AzListView(
+          data: indexedData,
+          itemCount: indexedData.length,
+          itemBuilder: (context, index) {
+            return ContactTile(
+              userInfo: (indexedData[index] as ContactModel).userInfo,
+            );
+          },
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          susItemBuilder: (context, index) {
+            return Container(
+              height: 40,
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.only(left: 16.0),
+              color: Colors.grey[200],
+              alignment: Alignment.centerLeft,
+              child: Text(
+                indexedData[index].getSuspensionTag(),
+                softWrap: false,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.grey[700],
                 ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

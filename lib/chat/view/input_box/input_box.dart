@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:54:30
- * @LastEditTime : 2022-10-15 00:27:39
+ * @LastEditTime : 2022-10-18 11:25:12
  * @Description  : 
  */
 
@@ -16,7 +16,6 @@ import 'package:tcp_client/chat/view/input_box/cubit/input_cubit.dart';
 import 'package:tcp_client/chat/view/input_box/cubit/input_state.dart';
 import 'package:tcp_client/chat/view/input_box/model/input.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
-import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 
 class InputBox extends StatelessWidget {
   InputBox({super.key});
@@ -29,9 +28,11 @@ class InputBox extends StatelessWidget {
       create:(context) => MessageInputCubit(
         chatCubit: context.read<ChatCubit>()
       ),
-      child: SizedBox(
-        height: 64,
+      child: Container(
+        // height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: BlocListener<MessageInputCubit, MessageInputState>(
@@ -39,16 +40,29 @@ class InputBox extends StatelessWidget {
                 listener: (context, state) {
                   _controller.clear();
                 },
-                child: Builder(
+                child: Container(
+                  constraints: const BoxConstraints(maxHeight: 120),
+                  child: Builder(
                     builder: (context) => TextField(
-                    controller: _controller,
-                    onChanged: (value) {
-                      context.read<MessageInputCubit>().onInputChange(MessageInput.dirty(value));
-                    },
+                      controller: _controller,
+                      onChanged: (value) {
+                        context.read<MessageInputCubit>().onInputChange(MessageInput.dirty(value));
+                      },
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 1.0
+                          )
+                        ),
+                        hintText: 'Input message here'
+                      ),
+                    ),
                   ),
                 )
               ),
             ),
+            const SizedBox(width: 8.0,),
             IconButton(
               onPressed: () {
                 var chatCubit = context.read<ChatCubit>();
@@ -66,8 +80,9 @@ class InputBox extends StatelessWidget {
                   }
                 });
               }, 
-              icon: const Icon(Icons.attach_file_rounded)
+              icon: Icon(Icons.attach_file_rounded, color: Colors.grey[700],)
             ),
+            const SizedBox(width: 8.0,),
             BlocBuilder<MessageInputCubit, MessageInputState>(
               builder:(context, state) {
                 return IconButton(
@@ -75,6 +90,7 @@ class InputBox extends StatelessWidget {
                     context.read<MessageInputCubit>().onSubmission();
                   } : null,
                   icon: const Icon(Icons.send_rounded),
+                  color: state.status == FormzStatus.valid ? Colors.blue : Colors.grey[400],
                 );
               },
             )

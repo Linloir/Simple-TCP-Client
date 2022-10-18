@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-15 16:50:16
+ * @LastEditTime : 2022-10-18 11:27:46
  * @Description  : TCP repository
  */
 
@@ -25,13 +25,26 @@ class TCPRepository {
     required String remoteAddress,
     required int remotePort
   }): _socket = socket, _remoteAddress = remoteAddress, _remotePort = remotePort {
-    _socket.listen(_pullResponse);
+    Future(() async {
+      try{
+        await for(var response in _socket) {
+          _pullResponse(response);
+        }
+      } catch(e) {
+        _socket.close();
+      }
+      // _responseRawStreamController.close();
+      // _payloadPullStreamController.close();
+      // _payloadRawStreamController.close();
+      // _responseStreamController.close();
+      // _requestStreamController.close();
+    });
     //This future never ends, would that be bothersome?
     Future(() async {
       await for(var request in _requestStreamController.stream) {
         await _socket.addStream(request.stream);
       }
-    });
+    }).onError((error, stackTrace) {_socket.close();});
     Future(() async {
       var responseQueue = StreamQueue(_responseRawStreamController.stream);
       var payloadQueue = StreamQueue(_payloadRawStreamController.stream);
@@ -42,7 +55,7 @@ class TCPRepository {
       }
       responseQueue.cancel();
       payloadQueue.cancel();
-    });
+    }).onError((error, stackTrace) {_socket.close();});
   }
 
   static Future<TCPRepository> create({
@@ -74,6 +87,9 @@ class TCPRepository {
   int responseLength = 0;
   //Byte length for subsequent data of the json object
   int payloadLength = 0;
+
+  //Temp filename counter
+  int _fileCounter = 0;
 
   //Construct a stream which emits events on intact requests
   final StreamController<List<int>> _responseRawStreamController = StreamController();
@@ -147,9 +163,11 @@ class TCPRepository {
             Future(() async {
               var documentDirectory = await getApplicationDocumentsDirectory();
               //Create temp file to read payload (might be huge)
-              Directory('${documentDirectory.path}/ChatClient').createSync();
-              Directory('${documentDirectory.path}/ChatClient/.tmp').createSync();
-              var tempFile = File('${documentDirectory.path}/ChatClient/.tmp/${DateTime.now().microsecondsSinceEpoch}')..createSync();
+              Directory('${documentDirectory.path}/LChatClient').createSync();
+              Directory('${documentDirectory.path}/LChatClient/.tmp').createSync();
+              var tempFile = File('${documentDirectory.path}/LChatClient/.tmp/${DateTime.now().microsecondsSinceEpoch}$_fileCounter')..createSync();
+              _fileCounter += 1;
+              _fileCounter %= 10;
               await for(var data in payloadPullStream) {
                 await tempFile.writeAsBytes(data, mode: FileMode.append, flush: true);
               }
@@ -342,10 +360,5 @@ class TCPRepository {
   void dispose() async {
     await _socket.flush();
     await _socket.close();
-    _responseRawStreamController.close();
-    _payloadPullStreamController.close();
-    _payloadRawStreamController.close();
-    _responseStreamController.close();
-    _requestStreamController.close();
   }
 }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-17 17:43:55
+ * @LastEditTime : 2022-10-18 11:25:04
  * @Description  : 
  */
 
@@ -9,7 +9,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/chat/cubit/chat_state.dart';
 import 'package:tcp_client/chat/model/chat_history.dart';
@@ -158,7 +157,6 @@ class ChatCubit extends Cubit<ChatState> {
       response as ForwardMessageResponse;
       if(response.message.senderID == userID || response.message.recieverID == userID) {
         // Message storage will be handled by home bloc listener
-        // addMessage(response.message);
         //Emit new state
         var newHistory = ChatHistory(
           message: response.message,

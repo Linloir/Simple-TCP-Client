@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-17 13:01:35
+ * @LastEditTime : 2022-10-18 11:27:15
  * @Description  : Local Service Repository
  */
 
@@ -133,20 +133,30 @@ class LocalServiceRepository {
   }
 
   Future<List<Message>> findMessages({required String pattern}) async {
+    if(pattern.isEmpty) {
+      return [];
+    }
     // Obtain shared preferences.
     final pref = await SharedPreferences.getInstance();
     // Get user info from preferences
     var currentUserID = pref.getInt('userid');
-    var alikeMessages = await _database.query(
+    var rawMessages = await _database.query(
       'msgs',
-      where: 'userid = ? or targetid = ?',
+      where: '(userid = ? or targetid = ?)',
       whereArgs: [
         currentUserID, currentUserID
       ],
       orderBy: 'timestamp desc',
       limit: 100
     );
-    return alikeMessages.map((e) => Message.fromJSONObject(jsonObject: e)).toList();
+    List<Message> alikeMessages = [];
+    for(var rawMessage in rawMessages) {
+      var message = Message.fromJSONObject(jsonObject: rawMessage);
+      if(message.contentDecoded.contains(pattern)) {
+        alikeMessages.add(message);
+      }
+    }
+    return alikeMessages;
   }
 
   //Find the most recent message of given users
@@ -266,7 +276,7 @@ class LocalServiceRepository {
         conflictAlgorithm: ConflictAlgorithm.replace
       );
     } catch (err) {
-      print(err);
+      //TODO: Log the err
     }
     //Clear temp file
     tempFile.file.delete();
@@ -318,7 +328,19 @@ class LocalServiceRepository {
   }
 
   Future<UserInfo?> fetchUserInfoViaUsername({required String username}) async {
-    
+    var result = await _database.query(
+      'users',
+      where: 'username = ?',
+      whereArgs: [
+        username
+      ]
+    );
+    if(result.isEmpty) {
+      return null;
+    }
+    else {
+      return UserInfo.fromJSONObject(jsonObject: result[0]);
+    }
   }
 
   Future<Message?> fetchMessage({required String msgmd5}) async {

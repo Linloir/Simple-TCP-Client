@@ -1,11 +1,9 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-17 17:18:22
+ * @LastEditTime : 2022-10-18 11:25:40
  * @Description  : 
  */
-
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +11,6 @@ import 'package:tcp_client/chat/chat_page.dart';
 import 'package:tcp_client/common/avatar/avatar.dart';
 import 'package:tcp_client/common/username/username.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
-import 'package:tcp_client/repositories/common_models/userinfo.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
 import 'package:tcp_client/repositories/user_repository/user_repository.dart';
@@ -110,6 +107,8 @@ class MessageTile extends StatelessWidget {
                         child: IgnorePointer(
                           child: Text(
                             message?.contentDecoded ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 16,
                             ),

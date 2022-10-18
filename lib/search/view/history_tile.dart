@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:41:49
- * @LastEditTime : 2022-10-14 10:38:31
+ * @LastEditTime : 2022-10-17 22:23:46
  * @Description  : 
  */
 
@@ -36,6 +36,7 @@ class HistoryTile extends StatelessWidget {
             const SizedBox(width: 12,),
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -51,6 +52,8 @@ class HistoryTile extends StatelessWidget {
                     ),
                     child: Text(
                       message.contentDecoded,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 16,
                       ),

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:02:19
- * @LastEditTime : 2022-10-14 15:12:02
+ * @LastEditTime : 2022-10-18 14:11:36
  * @Description  : 
  */
 
@@ -185,7 +185,7 @@ class FetchMessageResponse extends TCPResponse {
   FetchMessageResponse({
     required Map<String, Object?> jsonObject
   }): super(jsonObject: jsonObject) {
-    _messages = ((jsonObject['body'] as Map<String, Object?>)['messages'] as List)
+    _messages = (((jsonObject['body'] as Map<String, Object?>?) ?? {'messages': []})['messages'] as List)
       .map((e) => Message.fromJSONObject(jsonObject: e)).toList();
   }
 

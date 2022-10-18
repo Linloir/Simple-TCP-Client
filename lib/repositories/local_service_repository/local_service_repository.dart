@@ -1,13 +1,15 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-18 11:27:15
+ * @LastEditTime : 2022-10-18 14:35:25
  * @Description  : Local Service Repository
  */
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -114,9 +116,15 @@ class LocalServiceRepository {
     );
     if (filePickResult == null) return null;
     var file = File(filePickResult.files.single.path!);
+    var md5Output = AccumulatorSink<Digest>();
+    ByteConversionSink md5Input = md5.startChunkedConversion(md5Output);
+    await for(var bytes in file.openRead()) {
+      md5Input.add(bytes);
+    }
+    md5Input.close();
     return LocalFile(
       file: file, 
-      filemd5: md5.convert(await file.readAsBytes()).toString()
+      filemd5: md5Output.events.single.toString()
     );
   }
 

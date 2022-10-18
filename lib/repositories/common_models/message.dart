@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:30:05
- * @LastEditTime : 2022-10-14 23:53:18
+ * @LastEditTime : 2022-10-18 14:20:02
  * @Description  : 
  */
 
@@ -89,6 +89,6 @@ class Message extends JSONEncodable {
     'content': _content,
     'timestamp': _timestamp,
     'md5encoded': _contentmd5,
-    'filemd5': payload?.filemd5
+    'filemd5': payload?.filemd5 ?? _filemd5
   };
 }

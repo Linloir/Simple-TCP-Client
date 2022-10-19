@@ -94,8 +94,8 @@ BEGIN
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "LChatClient" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.linloir. All rights reserved." "\0"
-            VALUE "OriginalFilename", "LCatClient.exe" "\0"
-            VALUE "ProductName", "LCatClient" "\0"
+            VALUE "OriginalFilename", "LChatClient.exe" "\0"
+            VALUE "ProductName", "LChatClient" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

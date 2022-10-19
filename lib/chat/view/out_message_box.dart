@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 13:49:28
- * @LastEditTime : 2022-10-15 10:23:43
+ * @LastEditTime : 2022-10-19 23:47:20
  * @Description  : 
  */
 
@@ -22,51 +22,70 @@ class OutMessageBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      key: ValueKey(history.message.contentmd5),
-      duration: const Duration(milliseconds: 375),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8
-      ),
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8.0),
-            topRight: Radius.circular(8.0),
-            bottomLeft: Radius.circular(8.0),
-            bottomRight: Radius.zero
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        AnimatedContainer(
+          key: ValueKey(history.message.contentmd5),
+          duration: const Duration(milliseconds: 375),
+          padding: history.message.type == MessageType.image ? 
+            const EdgeInsets.all(0) : 
+            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
+                bottomLeft: Radius.circular(8.0),
+                bottomRight: Radius.zero
+            ),
+            boxShadow: [BoxShadow(blurRadius: 5.0, color: Colors.grey.withOpacity(0.2))]
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
+                bottomLeft: Radius.circular(8.0),
+                bottomRight: Radius.zero
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if(history.message.type == MessageType.file)
+                  FileBox(history: history),
+                if(history.message.type == MessageType.image)
+                  ImageBox(history: history),
+                if(history.message.type == MessageType.plaintext)
+                  TextBox(history: history),
+                if(history.message.type != MessageType.image)
+                  ...[
+                    const SizedBox(height: 4.0,),
+                    Text(
+                      _getTimeStamp(history.message.timeStamp),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[200],
+                      ),
+                    )
+                  ],
+              ],
+            ),
+          )
         ),
-        boxShadow: [BoxShadow(blurRadius: 5.0, color: Colors.grey.withOpacity(0.2))]
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8.0),
-            topRight: Radius.circular(8.0),
-            bottomLeft: Radius.circular(8.0),
-            bottomRight: Radius.zero
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if(history.message.type == MessageType.file)
-              FileBox(history: history),
-            if(history.message.type == MessageType.image)
-              ImageBox(history: history),
-            if(history.message.type == MessageType.plaintext)
-              TextBox(history: history),
+        if(history.message.type == MessageType.image)
+          ...[
             const SizedBox(height: 4.0,),
             Text(
               _getTimeStamp(history.message.timeStamp),
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[200],
+                color: Colors.grey[800],
               ),
-            )
-          ],
-        ),
-      )
+            ),
+          ]
+      ]
     );
   }
 

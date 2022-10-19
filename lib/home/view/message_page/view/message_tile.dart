@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-18 11:25:40
+ * @LastEditTime : 2022-10-20 00:52:14
  * @Description  : 
  */
 
@@ -106,7 +106,7 @@ class MessageTile extends StatelessWidget {
                         ),
                         child: IgnorePointer(
                           child: Text(
-                            message?.contentDecoded ?? '',
+                            message?.type == MessageType.image ? '[Image]' : message?.contentDecoded ?? '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

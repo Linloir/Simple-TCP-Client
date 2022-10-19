@@ -1,9 +1,11 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:54:30
- * @LastEditTime : 2022-10-18 15:30:05
+ * @LastEditTime : 2022-10-19 23:33:25
  * @Description  : 
  */
+
+import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +83,24 @@ class InputBox extends StatelessWidget {
                 });
               }, 
               icon: Icon(Icons.attach_file_rounded, color: Colors.grey[700],)
+            ),
+            const SizedBox(width: 8.0,),
+            IconButton(
+              onPressed: () {
+                var chatCubit = context.read<ChatCubit>();
+                chatCubit.localServiceRepository.pickFile(FileType.image).then((img) async {
+                  if(img != null) {
+                    var newMessage = Message(
+                      userid: (await SharedPreferences.getInstance()).getInt('userid')!,
+                      targetid: chatCubit.userID,
+                      content: base64.encode(await img.readAsBytes()),
+                      contenttype: MessageType.image,
+                    );
+                    chatCubit.addMessage(newMessage);
+                  }
+                });
+              }, 
+              icon: Icon(Icons.photo_rounded, color: Colors.grey[700],)
             ),
             const SizedBox(width: 8.0,),
             BlocBuilder<MessageInputCubit, MessageInputState>(

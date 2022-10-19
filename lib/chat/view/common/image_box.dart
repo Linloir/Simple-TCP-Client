@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:20
- * @LastEditTime : 2022-10-14 17:34:12
+ * @LastEditTime : 2022-10-20 00:47:44
  * @Description  : 
  */
 
@@ -22,7 +22,10 @@ class ImageBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){},
-      child: Image.memory(base64Decode(history.message.contentDecoded))
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 250),
+        child: Image.memory(base64Decode(history.message.contentDecoded)),
+      ),
     );
   }
 }

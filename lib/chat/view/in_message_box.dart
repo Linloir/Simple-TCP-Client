@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 13:49:47
- * @LastEditTime : 2022-10-15 10:24:35
+ * @LastEditTime : 2022-10-19 23:45:16
  * @Description  : 
  */
 
@@ -22,51 +22,67 @@ class InMessageBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      key: ValueKey(history.message.contentmd5),
-      duration: const Duration(milliseconds: 375),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8
-      ),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8.0),
-            topRight: Radius.circular(8.0),
-            bottomLeft: Radius.zero,
-            bottomRight: Radius.circular(8.0)
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AnimatedContainer(
+          key: ValueKey(history.message.contentmd5),
+          duration: const Duration(milliseconds: 375),
+          padding: history.message.type == MessageType.image ? 
+            const EdgeInsets.all(0) : 
+            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
+                bottomLeft: Radius.zero,
+                bottomRight: Radius.circular(8.0)
+            ),
+            boxShadow: [BoxShadow(blurRadius: 5.0, color: Colors.grey.withOpacity(0.3))]
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
+                bottomLeft: Radius.zero,
+                bottomRight: Radius.circular(8.0)
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if(history.message.type == MessageType.file)
+                  FileBox(history: history),
+                if(history.message.type == MessageType.image)
+                  ImageBox(history: history),
+                if(history.message.type == MessageType.plaintext)
+                  TextBox(history: history),
+                if(history.message.type != MessageType.image)
+                  ...[
+                    const SizedBox(height: 4.0,),
+                    Text(
+                      _getTimeStamp(history.message.timeStamp),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[400],
+                      ),
+                    )
+                  ]
+              ],
+            ),
+          )
         ),
-        boxShadow: [BoxShadow(blurRadius: 5.0, color: Colors.grey.withOpacity(0.3))]
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8.0),
-            topRight: Radius.circular(8.0),
-            bottomLeft: Radius.zero,
-            bottomRight: Radius.circular(8.0)
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if(history.message.type == MessageType.file)
-              FileBox(history: history),
-            if(history.message.type == MessageType.image)
-              ImageBox(history: history),
-            if(history.message.type == MessageType.plaintext)
-              TextBox(history: history),
-            const SizedBox(height: 4.0,),
-            Text(
-              _getTimeStamp(history.message.timeStamp),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[400],
-              ),
-            )
-          ],
-        ),
-      )
+        if(history.message.type == MessageType.image)
+          Text(
+            _getTimeStamp(history.message.timeStamp),
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[400],
+            ),
+          )
+      ]
     );
   }
 

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-19 18:00:37
+ * @LastEditTime : 2022-10-20 00:13:18
  * @Description  : 
  */
 
@@ -106,6 +106,9 @@ class ChatCubit extends Cubit<ChatState> {
     );
     var newHistories = [];
     for(var message in fetchedMessages) {
+      if(state.chatHistory.any((element) => element.message.contentmd5 == message.contentmd5)) {
+        continue;
+      }
       var history = ChatHistory(
         message: message,
         type: message.senderID == userID ? ChatHistoryType.income : ChatHistoryType.outcome,

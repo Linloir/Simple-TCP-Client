@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-17 17:15:12
+ * @LastEditTime : 2022-10-19 18:02:22
  * @Description  : 
  */
 
@@ -82,6 +82,8 @@ class MessageListCubit extends Cubit<MessageListState> {
               message: message,
               targetUser: targetUser
             )));
+            var msgUserList = state.messageList.map((e) => e.targetUser.toString()).toList();
+            pref.setStringList('${currentUserID}msg', msgUserList);
           }
         }
         break;

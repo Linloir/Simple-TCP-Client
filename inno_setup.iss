@@ -38,6 +38,7 @@ Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release
 Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\window_manager_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\screen_retriever_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\LChatClient.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

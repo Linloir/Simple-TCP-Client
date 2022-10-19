@@ -20,7 +20,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=C:\Users\Linloir\Desktop\lchatclientcompiler
+OutputDir=build\inno
 OutputBaseFilename=mysetup
 Compression=lzma
 SolidCompression=yes
@@ -33,13 +33,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\window_manager_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\screen_retriever_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Repositories\CollegeProjects\tcp_client\build\windows\runner\Release\LChatClient.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\windows\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\windows\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "build\windows\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\windows\runner\Release\window_manager_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\windows\runner\Release\screen_retriever_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\windows\runner\Release\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\windows\runner\Release\LChatClient.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Dirs]

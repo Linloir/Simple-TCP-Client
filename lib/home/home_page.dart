@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-17 16:57:57
+ * @LastEditTime : 2022-10-19 11:08:50
  * @Description  : 
  */
 
@@ -18,8 +18,9 @@ import 'package:tcp_client/repositories/local_service_repository/local_service_r
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
 import 'package:tcp_client/repositories/user_repository/user_repository.dart';
 import 'package:tcp_client/search/search_page.dart';
+import 'package:window_manager/window_manager.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatelessWidget with WindowListener {
   const HomePage({
     required this.userID,
     required this.localServiceRepository,

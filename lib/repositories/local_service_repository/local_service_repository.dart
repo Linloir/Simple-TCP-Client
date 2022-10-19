@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-18 15:13:27
+ * @LastEditTime : 2022-10-19 10:28:21
  * @Description  : Local Service Repository
  */
 
@@ -239,13 +239,13 @@ class LocalServiceRepository {
         var fileExt = fileName.substring(fileName.lastIndexOf('.'));
         var duplicate = 0;
         //Rename target file
-        await Directory('$documentPath/files').create();
-        await Directory('$documentPath/files/$userID').create();
-        var targetFilePath = '$documentPath/files/$userID/$fileBaseName$fileExt';
+        await Directory('$documentPath/LChatClient/files').create();
+        await Directory('$documentPath/LChatClient/files/$userID').create();
+        var targetFilePath = '$documentPath/LChatClient/files/$userID/$fileBaseName$fileExt';
         var targetFile = File(targetFilePath);
         while(await targetFile.exists()) {
           duplicate += 1;
-          targetFilePath = '$documentPath/files/$userID/$fileBaseName($duplicate)$fileExt';
+          targetFilePath = '$documentPath/LChatClient/files/$userID/$fileBaseName($duplicate)$fileExt';
           targetFile = File(targetFilePath);
         }
         targetFile = await file.copy(targetFilePath);
@@ -271,9 +271,9 @@ class LocalServiceRepository {
   }) async {
     //Write to file library
     var documentPath = (await getApplicationDocumentsDirectory()).path;
-    await Directory('$documentPath/files').create();
-    await Directory('$documentPath/files/.lib').create();
-    var permanentFilePath = '$documentPath/files/.lib/${tempFile.filemd5}';
+    await Directory('$documentPath/LChatClient/files').create();
+    await Directory('$documentPath/LChatClient/files/.lib').create();
+    var permanentFilePath = '$documentPath/LChatClient/files/.lib/${tempFile.filemd5}';
     await tempFile.file.copy(permanentFilePath);
     try{
       await _database.insert(

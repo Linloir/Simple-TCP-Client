@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-19 00:57:05
+ * @LastEditTime : 2022-10-19 10:41:43
  * @Description  : TCP repository
  */
 
@@ -170,7 +170,7 @@ class TCPRepository {
               _fileCounter += 1;
               _fileCounter %= 10;
               await for(var data in payloadPullStream) {
-                await tempFile.writeAsBytes(data, mode: FileMode.append, flush: true);
+                await tempFile.writeAsBytes(data, mode: FileMode.append);
               }
               _payloadRawStreamController.add(tempFile);
             });
@@ -206,7 +206,7 @@ class TCPRepository {
           if(buffer.length >= payloadLength) {
             //Last few bytes to emit
             //Send the last few bytes to stream
-            _payloadPullStreamController.add(Uint8List.fromList(buffer.sublist(0, payloadLength)));
+            _payloadPullStreamController.add(buffer.sublist(0, payloadLength));
             //Clear buffer
             buffer.removeRange(0, payloadLength);
             //Set payload length to zero
@@ -217,7 +217,7 @@ class TCPRepository {
           else {
             //Part of payload
             //Transmit all to stream
-            _payloadPullStreamController.add(Uint8List.fromList(buffer));
+            _payloadPullStreamController.add([...buffer]);
             //Reduce payload bytes left
             payloadLength -= buffer.length;
             //Clear buffer

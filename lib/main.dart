@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-10 08:04:53
- * @LastEditTime : 2022-10-19 11:17:44
+ * @LastEditTime : 2022-10-20 10:34:41
  * @Description  : 
  */
 import 'package:easy_debounce/easy_debounce.dart';
@@ -38,12 +38,12 @@ void main() async {
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.normal
   );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
     if(posX != null && posY != null) {
       await windowManager.setPosition(Offset(posX, posY));
     }
+    await windowManager.show();
+    await windowManager.focus();
   });
 
   //---------------------------------------------------------------------

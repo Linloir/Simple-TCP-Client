@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-20 00:13:18
+ * @LastEditTime : 2022-10-20 11:04:40
  * @Description  : 
  */
 
@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/chat/cubit/chat_state.dart';
@@ -78,7 +79,8 @@ class ChatCubit extends Cubit<ChatState> {
     var newHistory = ChatHistory(
       message: msg,
       type: ChatHistoryType.outcome,
-      status: ChatHistoryStatus.sending
+      status: ChatHistoryStatus.sending,
+      preCachedImage: msg.type == MessageType.image ? Image.memory(base64.decode(msg.contentDecoded)) : null
     );
     if(msg.type == MessageType.file) {
       //Remove mock history
@@ -112,7 +114,8 @@ class ChatCubit extends Cubit<ChatState> {
       var history = ChatHistory(
         message: message,
         type: message.senderID == userID ? ChatHistoryType.income : ChatHistoryType.outcome,
-        status: ChatHistoryStatus.done
+        status: ChatHistoryStatus.done,
+        preCachedImage: message.type == MessageType.image ? Image.memory(base64.decode(message.contentDecoded)) : null
       );
       newHistories.add(history);
     }
@@ -208,7 +211,8 @@ class ChatCubit extends Cubit<ChatState> {
         var newHistory = ChatHistory(
           message: response.message,
           type: response.message.senderID == userID ? ChatHistoryType.income : ChatHistoryType.outcome,
-          status: ChatHistoryStatus.done
+          status: ChatHistoryStatus.done,
+          preCachedImage: response.message.type == MessageType.image ? Image.memory(base64.decode(response.message.contentDecoded)) : null
         );
         var newHistoryList = [newHistory, ...state.chatHistory];
         emit(state.copyWith(chatHistory: newHistoryList));
@@ -223,7 +227,8 @@ class ChatCubit extends Cubit<ChatState> {
           var newHistory = ChatHistory(
             message: message,
             type: message.senderID == userID ? ChatHistoryType.income : ChatHistoryType.outcome,
-            status: ChatHistoryStatus.done
+            status: ChatHistoryStatus.done,
+            preCachedImage: message.type == MessageType.image ? Image.memory(base64.decode(message.contentDecoded)) : null
           );
           fetchedHistories.insert(0, newHistory);
         }

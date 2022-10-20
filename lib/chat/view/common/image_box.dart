@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:20
- * @LastEditTime : 2022-10-20 00:47:44
+ * @LastEditTime : 2022-10-20 11:05:37
  * @Description  : 
  */
 
@@ -24,7 +24,7 @@ class ImageBox extends StatelessWidget {
       onTap: (){},
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500, maxHeight: 250),
-        child: Image.memory(base64Decode(history.message.contentDecoded)),
+        child: history.preCachedImage ?? Image.memory(base64Decode(history.message.contentDecoded)),
       ),
     );
   }

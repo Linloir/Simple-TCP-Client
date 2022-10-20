@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 20:18:14
- * @LastEditTime : 2022-10-13 21:26:16
+ * @LastEditTime : 2022-10-20 11:50:26
  * @Description  : Repository to cache user info
  */
 
@@ -36,6 +36,12 @@ class UserRepository {
   Future<void> _onResponse(TCPResponse response) async {
     if(response.type == TCPResponseType.profile && response.status == TCPResponseStatus.ok) {
       response as GetProfileResponse;
+      users.update(response.userInfo!.userID, (value) => response.userInfo!, ifAbsent: () => response.userInfo!);
+      _userInfoStreamController.add(response.userInfo!);
+      localServiceRepository.storeUserInfo(userInfo: response.userInfo!);
+    }
+    else if(response.type == TCPResponseType.modifyProfile && response.status == TCPResponseStatus.ok) {
+      response as ModifyProfileResponse;
       users.update(response.userInfo!.userID, (value) => response.userInfo!, ifAbsent: () => response.userInfo!);
       _userInfoStreamController.add(response.userInfo!);
       localServiceRepository.storeUserInfo(userInfo: response.userInfo!);

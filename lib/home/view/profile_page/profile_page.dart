@@ -1,20 +1,28 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:12
- * @LastEditTime : 2022-10-14 12:10:34
+ * @LastEditTime : 2022-10-20 11:45:15
  * @Description  : 
  */
 
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/common/avatar/avatar.dart';
 import 'package:tcp_client/common/username/username.dart';
+import 'package:tcp_client/home/cubit/home_cubit.dart';
 import 'package:tcp_client/home/view/profile_page/cubit/log_out_cubit.dart';
 import 'package:tcp_client/home/view/profile_page/cubit/log_out_state.dart';
 import 'package:tcp_client/home/view/profile_page/view/log_out_button.dart';
 import 'package:tcp_client/login/login_page.dart';
+import 'package:tcp_client/repositories/common_models/userinfo.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
+import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
+import 'package:tcp_client/repositories/user_repository/user_repository.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage({
@@ -62,7 +70,29 @@ class MyProfilePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  UserAvatar(userid: userID, size: 96,),
+                  UserAvatar(
+                    userid: userID, 
+                    size: 96,
+                    onTap: () async {
+                      var homeCubit = context.read<HomeCubit>();
+                      var userInfo = context.read<UserRepository>().getUserInfo(userid: userID);
+                      homeCubit.localServiceRepository.pickFile(FileType.image).then((img) async {
+                        if(img != null) {
+                          var pref = await SharedPreferences.getInstance();
+                          var token = pref.getInt('token');
+                          var newRequest = ModifyProfileRequest(
+                            userInfo: UserInfo(
+                              userid: userID,
+                              username: userInfo.userName,
+                              avatar: base64.encode(await img.readAsBytes())
+                            ),
+                            token: token
+                          );
+                          homeCubit.tcpRepository.pushRequest(newRequest);
+                        }
+                      });
+                    },
+                  ),
                   const SizedBox(height: 48,),
                   UserNameText(
                     userid: userID, 

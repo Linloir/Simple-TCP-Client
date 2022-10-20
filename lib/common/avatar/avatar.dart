@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:49:53
- * @LastEditTime : 2022-10-14 10:32:50
+ * @LastEditTime : 2022-10-20 11:52:12
  * @Description  : 
  */
 
@@ -17,11 +17,13 @@ class UserAvatar extends StatelessWidget {
   const UserAvatar({
     required this.userid, 
     this.size = 48,
+    this.onTap,
     super.key
   });
 
   final int userid;
   final double size;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,19 +37,30 @@ class UserAvatar extends StatelessWidget {
           return Container(
             width: size,
             height: size,
-            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: Colors.grey[600],
               borderRadius: BorderRadius.circular(5.0),
               boxShadow: [BoxShadow(blurRadius: 10.0, color: Colors.grey[850]!.withOpacity(0.15))]
             ),
-            child: Text(
-              state.userInfo.userName[0].toUpperCase(),
-              style: TextStyle(
-                fontSize: 24 * (size / 48),
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-                shadows: [Shadow(blurRadius: 5.0, color: Colors.white.withOpacity(0.15))]
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      state.userInfo.userName[0].toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 24 * (size / 48),
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white,
+                        shadows: [Shadow(blurRadius: 5.0, color: Colors.white.withOpacity(0.15))]
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           );
@@ -62,13 +75,19 @@ class UserAvatar extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
-              child: OverflowBox(
-                alignment: Alignment.center,
-                child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Image.memory(base64.decode(state.userInfo.avatarEncoded!)),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  child: OverflowBox(
+                    alignment: Alignment.center,
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: Image.memory(base64.decode(state.userInfo.avatarEncoded!)),
+                    ),
+                  )
                 ),
-              )
+              ),
             ),
           );
         }

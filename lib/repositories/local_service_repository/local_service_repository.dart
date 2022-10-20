@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-19 10:28:21
+ * @LastEditTime : 2022-10-20 17:24:26
  * @Description  : Local Service Repository
  */
 
@@ -151,9 +151,9 @@ class LocalServiceRepository {
     var currentUserID = pref.getInt('userid');
     var rawMessages = await _database.query(
       'msgs',
-      where: '(userid = ? or targetid = ?)',
+      where: '(userid = ? or targetid = ?) and not contenttype = ?',
       whereArgs: [
-        currentUserID, currentUserID
+        currentUserID, currentUserID, MessageType.image.literal
       ],
       orderBy: 'timestamp desc',
       limit: 100
@@ -161,7 +161,7 @@ class LocalServiceRepository {
     List<Message> alikeMessages = [];
     for(var rawMessage in rawMessages) {
       var message = Message.fromJSONObject(jsonObject: rawMessage);
-      if(message.contentDecoded.contains(pattern)) {
+      if(message.contentDecoded.toLowerCase().contains(pattern.toLowerCase())) {
         alikeMessages.add(message);
       }
     }

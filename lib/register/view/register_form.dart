@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 16:29:25
- * @LastEditTime : 2022-10-12 17:44:33
+ * @LastEditTime : 2022-10-20 20:54:22
  * @Description  : 
  */
 
@@ -103,8 +103,13 @@ class SubmitButton extends StatelessWidget {
               }),
               overlayColor: MaterialStateProperty.all(Colors.blue[900]!.withOpacity(0.2))
             ),
-            onPressed: state.status == FormzStatus.submissionInProgress ? null : () {
-              context.read<RegisterCubit>().onSubmission();
+            onPressed: () {
+              if(
+                state.status == FormzStatus.valid || 
+                state.status == FormzStatus.submissionFailure
+              ) {
+                context.read<RegisterCubit>().onSubmission();
+              }
             },
             child: state.status == FormzStatus.submissionInProgress ?
               const SizedBox(

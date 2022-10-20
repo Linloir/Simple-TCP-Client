@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 15:06:30
- * @LastEditTime : 2022-10-14 10:47:08
+ * @LastEditTime : 2022-10-20 20:55:07
  * @Description  : 
  */
 
@@ -46,11 +46,13 @@ class LoginPage extends StatelessWidget {
         body: BlocListener<LoginCubit, LoginState>(
           listener:(context, state) {
             if(state.status == FormzStatus.submissionFailure) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Login Failed'))
+                SnackBar(content: Text('Login Failed${state.info.isNotEmpty ? ': ${state.info}' : ''}'))
               );
             }
             else if(state.status == FormzStatus.submissionSuccess) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Login Successed'))
               );

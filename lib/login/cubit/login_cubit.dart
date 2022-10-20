@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 15:38:07
- * @LastEditTime : 2022-10-12 17:36:53
+ * @LastEditTime : 2022-10-20 20:51:09
  * @Description  : 
  */
 
@@ -47,7 +47,8 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> onSubmission() async {
     if(state.status.isValidated) {
       emit(state.copyWith(
-        status: FormzStatus.submissionInProgress
+        status: FormzStatus.submissionInProgress,
+        info: ""
       ));
       tcpRepository.pushRequest(LoginRequest(
         identity: UserIdentity(
@@ -67,7 +68,8 @@ class LoginCubit extends Cubit<LoginState> {
           }
           else {
             emit(state.copyWith(
-              status: FormzStatus.submissionFailure
+              status: FormzStatus.submissionFailure,
+              info: response.info?.replaceAll('Exception: ', ''),
             ));
           }
           break;

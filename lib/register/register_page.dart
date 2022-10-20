@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 17:36:38
- * @LastEditTime : 2022-10-19 11:14:06
+ * @LastEditTime : 2022-10-20 20:55:17
  * @Description  : 
  */
 /*
@@ -56,11 +56,13 @@ class RegisterPage extends StatelessWidget {
         body: BlocListener<RegisterCubit, RegisterState>(
           listener:(context, state) {
             if(state.status == FormzStatus.submissionFailure) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Register Failed'))
+                SnackBar(content: Text('Register Failed${state.info.isNotEmpty ? ': ${state.info}' : ''}'))
               );
             }
             else if(state.status == FormzStatus.submissionSuccess) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Register Successed'))
               );

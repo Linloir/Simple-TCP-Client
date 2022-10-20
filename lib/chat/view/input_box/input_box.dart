@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:54:30
- * @LastEditTime : 2022-10-19 23:33:25
+ * @LastEditTime : 2022-10-20 11:18:48
  * @Description  : 
  */
 
@@ -9,6 +9,7 @@ import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:path/path.dart';
@@ -43,26 +44,39 @@ class InputBox extends StatelessWidget {
                 listener: (context, state) {
                   _controller.clear();
                 },
-                child: Container(
-                  constraints: const BoxConstraints(maxHeight: 120),
-                  child: Builder(
-                    builder: (context) => TextField(
-                      controller: _controller,
-                      onChanged: (value) {
-                        context.read<MessageInputCubit>().onInputChange(MessageInput.dirty(value));
-                      },
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 1.0
-                          )
+                child: BlocBuilder<MessageInputCubit, MessageInputState>(
+                  builder:(context, state) {
+                    return Container(
+                      constraints: const BoxConstraints(maxHeight: 120),
+                      child: Builder(
+                        builder: (context) => CallbackShortcuts(
+                          bindings: {
+                            const SingleActivator(LogicalKeyboardKey.enter, control: true): () {
+                              if(state.status == FormzStatus.valid) {
+                                context.read<MessageInputCubit>().onSubmission();
+                              }
+                            }
+                          },
+                          child: TextField(
+                            controller: _controller,
+                            onChanged: (value) {
+                              context.read<MessageInputCubit>().onInputChange(MessageInput.dirty(value));
+                            },
+                            maxLines: null,
+                            decoration: const InputDecoration(
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  width: 1.0
+                                )
+                              ),
+                              hintText: 'Input message here'
+                            ),
+                          ),
                         ),
-                        hintText: 'Input message here'
                       ),
-                    ),
-                  ),
-                )
+                    );
+                  }
+                ),
               ),
             ),
             const SizedBox(width: 8.0,),

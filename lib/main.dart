@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-10 08:04:53
- * @LastEditTime : 2022-10-20 21:01:39
+ * @LastEditTime : 2022-10-20 23:11:45
  * @Description  : 
  */
 import 'package:easy_debounce/easy_debounce.dart';
@@ -119,7 +119,7 @@ class SplashPage extends StatelessWidget {
     return BlocProvider<InitializationCubit>(
       create: (context) {
         return InitializationCubit(
-          serverAddress: 'chat.linloir.cn', 
+          serverAddress: '127.0.0.1', 
           serverPort: 20706
         );
       },

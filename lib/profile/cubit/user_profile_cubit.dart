@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 08:54:32
- * @LastEditTime : 2022-10-20 11:30:46
+ * @LastEditTime : 2022-10-20 16:45:19
  * @Description  : 
  */
 
@@ -28,9 +28,8 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       emit(const UserProfileState(status: ContactStatus.none));
       return;
     }
-    var clonedTCPRepository = await tcpRepository.clone();
-    clonedTCPRepository.pushRequest(FetchContactRequest(token: (await SharedPreferences.getInstance()).getInt('token')));
-    await for(var response in clonedTCPRepository.responseStreamBroadcast) {
+    tcpRepository.pushRequest(FetchContactRequest(token: (await SharedPreferences.getInstance()).getInt('token')));
+    await for(var response in tcpRepository.responseStreamBroadcast) {
       if(response.type == TCPResponseType.fetchContact) {
         response as FetchContactResponse;
         if(response.addedContacts.any((element) => element.userID == userID)) {
@@ -45,7 +44,6 @@ class UserProfileCubit extends Cubit<UserProfileState> {
         break;
       }
     }
-    clonedTCPRepository.dispose();
   }
 
   Future<void> addContact() async {

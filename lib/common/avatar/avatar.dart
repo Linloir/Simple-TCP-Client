@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:49:53
- * @LastEditTime : 2022-10-20 13:46:16
+ * @LastEditTime : 2022-10-20 16:53:26
  * @Description  : 
  */
 
@@ -82,7 +82,7 @@ class UserAvatar extends StatelessWidget {
                     alignment: Alignment.center,
                     child: FittedBox(
                       fit: BoxFit.cover,
-                      child: Image.memory(base64.decode(state.userInfo.avatarEncoded!)),
+                      child: state.preCachedAvatar ?? Image.memory(base64.decode(state.userInfo.avatarEncoded!)),
                     ),
                   ),
                   Material(

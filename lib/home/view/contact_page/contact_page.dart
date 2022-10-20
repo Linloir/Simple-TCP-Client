@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:07
- * @LastEditTime : 2022-10-18 11:25:18
+ * @LastEditTime : 2022-10-20 17:04:52
  * @Description  : 
  */
 
@@ -26,7 +26,7 @@ class ContactPage extends StatelessWidget {
           itemCount: indexedData.length,
           itemBuilder: (context, index) {
             return ContactTile(
-              userInfo: (indexedData[index] as ContactModel).userInfo,
+              contactInfo: (indexedData[index] as ContactModel),
             );
           },
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -38,7 +38,7 @@ class ContactPage extends StatelessWidget {
               color: Colors.grey[200],
               alignment: Alignment.centerLeft,
               child: Text(
-                indexedData[index].getSuspensionTag(),
+                indexedData[index].getSuspensionTag() == '⨂' ? 'Pending for reply' : indexedData[index].getSuspensionTag() == '⊙' ? 'Requesting' : indexedData[index].getSuspensionTag(),
                 softWrap: false,
                 style: TextStyle(
                   fontSize: 14.0,

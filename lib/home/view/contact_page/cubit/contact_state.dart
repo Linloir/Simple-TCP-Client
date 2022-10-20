@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:01:39
- * @LastEditTime : 2022-10-17 17:28:33
+ * @LastEditTime : 2022-10-20 16:09:50
  * @Description  : 
  */
 
@@ -24,13 +24,17 @@ class ContactState extends Equatable {
   static ContactState empty() => const ContactState(contacts: [], pending: [], requesting: []);
 
   List<ISuspensionBean> get indexedData {
-    var indexedList = contacts.map((e) => ContactModel(userInfo: e)).toList();
+    var indexedList = contacts.map((e) => ContactModel(userInfo: e, status: ContactStatus.added)).toList();
     indexedList.sort((a, b) => a.getSuspensionTag().compareTo(b.getSuspensionTag()));
+    //Add requesting contacts
+    indexedList.insertAll(0, requesting.map((e) => ContactModel(userInfo: e, status: ContactStatus.requesting)).toList());
+    //Add pending contacts
+    indexedList.insertAll(0, pending.map((e) => ContactModel(userInfo: e, status: ContactStatus.pending)).toList());
     // SuspensionUtil.sortListBySuspensionTag(indexedList);
     SuspensionUtil.setShowSuspensionStatus(indexedList);
     return indexedList;
   }
 
   @override
-  List<Object> get props => contacts;
+  List<Object> get props => [...contacts, ...pending, ...requesting];
 }

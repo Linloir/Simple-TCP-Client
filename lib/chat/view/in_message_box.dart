@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 13:49:47
- * @LastEditTime : 2022-10-19 23:45:16
+ * @LastEditTime : 2022-10-20 13:56:20
  * @Description  : 
  */
 
@@ -75,13 +75,16 @@ class InMessageBox extends StatelessWidget {
           )
         ),
         if(history.message.type == MessageType.image)
-          Text(
-            _getTimeStamp(history.message.timeStamp),
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[400],
+          ...[
+            const SizedBox(height: 4.0,),
+            Text(
+              _getTimeStamp(history.message.timeStamp),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
             ),
-          )
+          ]
       ]
     );
   }

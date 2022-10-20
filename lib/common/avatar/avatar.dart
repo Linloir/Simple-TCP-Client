@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:49:53
- * @LastEditTime : 2022-10-20 11:52:12
+ * @LastEditTime : 2022-10-20 13:46:16
  * @Description  : 
  */
 
@@ -75,18 +75,23 @@ class UserAvatar extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: onTap,
-                  child: OverflowBox(
+              child: Stack(
+                fit: StackFit.passthrough,
+                children: [
+                  OverflowBox(
                     alignment: Alignment.center,
                     child: FittedBox(
                       fit: BoxFit.cover,
                       child: Image.memory(base64.decode(state.userInfo.avatarEncoded!)),
                     ),
-                  )
-                ),
+                  ),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onTap,
+                    ),
+                  ),
+                ],
               ),
             ),
           );

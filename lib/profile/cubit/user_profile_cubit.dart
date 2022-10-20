@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 08:54:32
- * @LastEditTime : 2022-10-14 11:30:59
+ * @LastEditTime : 2022-10-20 11:28:22
  * @Description  : 
  */
 
@@ -24,8 +24,10 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   final TCPRepository tcpRepository;
 
   Future<void> updateContactStatus() async {
+    var curUserId = (await SharedPreferences.getInstance()).getInt('userid');
     if(userID == (await SharedPreferences.getInstance()).getInt('userid')) {
       emit(const UserProfileState(status: ContactStatus.none));
+      return;
     }
     var clonedTCPRepository = await tcpRepository.clone();
     clonedTCPRepository.pushRequest(FetchContactRequest(token: (await SharedPreferences.getInstance()).getInt('token')));

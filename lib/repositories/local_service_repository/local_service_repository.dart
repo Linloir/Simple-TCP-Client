@@ -1,27 +1,19 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-20 17:24:26
+ * @LastEditTime : 2022-10-21 22:47:38
  * @Description  : Local Service Repository
  */
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/repositories/common_models/message.dart';
 import 'package:tcp_client/repositories/common_models/userinfo.dart';
 import 'package:tcp_client/repositories/local_service_repository/models/local_file.dart';
-//Windows platform
-import 'package:sqflite_common/sqlite_api.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-//Android platform
-// import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LocalServiceRepository {
   late final Database _database;
@@ -91,20 +83,11 @@ class LocalServiceRepository {
     UserInfo? currentUser,
     required String databaseFilePath
   }) async {
-    //Windows platform
-    var database = await databaseFactoryFfi.openDatabase(
+    var database = await openDatabase(
       databaseFilePath,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: _onDatabaseCreate
-      )
+      version: 1,
+      onCreate: _onDatabaseCreate
     );
-    //Android platform
-    // var database = await openDatabase(
-    //   databaseFilePath,
-    //   version: 1,
-    //   onCreate: _onDatabaseCreate
-    // );
     return LocalServiceRepository._internal(database: database);
   }
 
@@ -116,16 +99,6 @@ class LocalServiceRepository {
     );
     if (filePickResult == null) return null;
     var file = File(filePickResult.files.single.path!);
-    // var md5Output = AccumulatorSink<Digest>();
-    // ByteConversionSink md5Input = md5.startChunkedConversion(md5Output);
-    // await for(var bytes in file.openRead()) {
-    //   md5Input.add(bytes);
-    // }
-    // md5Input.close();
-    // return LocalFile(
-    //   file: file, 
-    //   filemd5: md5Output.events.single.toString()
-    // );
     return file;
   }
 

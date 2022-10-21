@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:02:28
- * @LastEditTime : 2022-10-17 19:26:13
+ * @LastEditTime : 2022-10-21 23:31:43
  * @Description  : 
  */
 
@@ -9,8 +9,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/cubit/home_state.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
+import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_response.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
 
@@ -19,11 +21,41 @@ class HomeCubit extends Cubit<HomeState> {
     required this.localServiceRepository,
     required this.tcpRepository,
     required this.pageController
-  }): super(const HomeState(page: HomePagePosition.message)) {
+  }): super(const HomeState(page: HomePagePosition.message, status: HomePageStatus.initializing)) {
     pageController.addListener(() {
       emit(state.copyWith(page: HomePagePosition.fromValue((pageController.page ?? 0).round())));
     });
     subscription = tcpRepository.responseStreamBroadcast.listen(_onTCPResponse);
+    Future(() async {
+      // var cloned = await tcpRepository.clone();
+      // cloned.pushRequest(FetchMessageRequest(
+      //   token: (await SharedPreferences.getInstance()).getInt('token')
+      // ));
+      // await for(var response in cloned.responseStreamBroadcast) {
+      //   if(response.type == TCPResponseType.fetchMessage) {
+      //     if(response.status == TCPResponseStatus.ok) {
+      //       response as FetchMessageResponse;
+      //       localServiceRepository.storeMessages(response.messages);
+      //       break;
+      //     }
+      //   }
+      // }
+      // cloned.dispose();
+      tcpRepository.pushRequest(FetchMessageRequest(
+        token: (await SharedPreferences.getInstance()).getInt('token')
+      ));
+      await for(var response in tcpRepository.responseStreamBroadcast) {
+        if(response.type == TCPResponseType.fetchMessage) {
+          if(response.status == TCPResponseStatus.ok) {
+            response as FetchMessageResponse;
+            localServiceRepository.storeMessages(response.messages);
+            break;
+          }
+        }
+      }
+    }).then((_) {
+      emit(state.copyWith(status: HomePageStatus.done));
+    });
   }
 
   final LocalServiceRepository localServiceRepository;
@@ -40,6 +72,9 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void _onTCPResponse(TCPResponse response) {
+    if(response.status == TCPResponseStatus.err) {
+      return;
+    }
     switch(response.type) {
       case TCPResponseType.forwardMessage: {
         response as ForwardMessageResponse;

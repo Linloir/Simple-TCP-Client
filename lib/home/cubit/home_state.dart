@@ -1,11 +1,13 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:02:24
- * @LastEditTime : 2022-10-13 16:55:05
+ * @LastEditTime : 2022-10-21 23:28:33
  * @Description  : 
  */
 
 import 'package:equatable/equatable.dart';
+
+enum HomePageStatus { initializing, done }
 
 enum HomePagePosition { 
   message(0), 
@@ -26,13 +28,14 @@ enum HomePagePosition {
 
 class HomeState extends Equatable {
   final HomePagePosition page;
+  final HomePageStatus status;
 
-  const HomeState({required this.page});
+  const HomeState({required this.page, required this.status});
 
-  HomeState copyWith({HomePagePosition? page}) {
-    return HomeState(page: page ?? this.page);
+  HomeState copyWith({HomePagePosition? page, HomePageStatus? status}) {
+    return HomeState(page: page ?? this.page, status: status ?? this.status);
   }
 
   @override
-  List<Object> get props => [page];
+  List<Object> get props => [page, status];
 }

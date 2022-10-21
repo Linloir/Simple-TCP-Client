@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-19 18:02:22
+ * @LastEditTime : 2022-10-21 23:14:02
  * @Description  : 
  */
 
@@ -40,10 +40,7 @@ class MessageListCubit extends Cubit<MessageListState> {
         }
       }
       return msgList;
-    }).then((msgList) => emit(state.updateWithList(orderedNewMessages: msgList)))
-      .then((_) async => tcpRepository.pushRequest(FetchMessageRequest(
-        token: (await SharedPreferences.getInstance()).getInt('token'))
-      ));
+    }).then((msgList) => emit(state.updateWithList(orderedNewMessages: msgList)));
   }
 
   final LocalServiceRepository localServiceRepository;

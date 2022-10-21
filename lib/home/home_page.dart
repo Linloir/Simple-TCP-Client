@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-19 11:08:50
+ * @LastEditTime : 2022-10-21 23:56:24
  * @Description  : 
  */
 
@@ -119,16 +119,56 @@ class HomePageView extends StatelessWidget {
           )
         ],
       ),
-      body: Center(
-        child: BlocBuilder<HomeCubit, HomeState>(
-          builder:(context, state) => PageView(
-            controller: context.read<HomeCubit>().pageController,
-            children: [
-              MessagePage(),
-              const ContactPage(),
-              MyProfilePage(userID: userID)
-            ],
-          ),
+      body: BlocBuilder<HomeCubit, HomeState>(
+        builder:(context, state) => Stack(
+          children: [
+            Positioned.fill(
+              child: Center(
+                child: PageView(
+                  controller: context.read<HomeCubit>().pageController,
+                  children: [
+                    MessagePage(),
+                    const ContactPage(),
+                    MyProfilePage(userID: userID)
+                  ],
+                ),
+              ),
+            ),
+            if(state.status == HomePageStatus.initializing)
+              Positioned.fill(
+                child: AbsorbPointer(
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800]!.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(8.0)
+                      ),
+                      height: 200,
+                      width: 200,
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 4.0,
+                          ),
+                          SizedBox(height: 16.0,),
+                          Text(
+                            'Fetching Messages',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ]
         ),
       ),
       bottomNavigationBar: BlocBuilder<HomeCubit, HomeState>(

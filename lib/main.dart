@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-10 08:04:53
- * @LastEditTime : 2022-10-21 22:49:14
+ * @LastEditTime : 2022-10-22 20:43:39
  * @Description  : 
  */
 import 'package:flutter/gestures.dart';
@@ -49,7 +49,7 @@ class SplashPage extends StatelessWidget {
     return BlocProvider<InitializationCubit>(
       create: (context) {
         return InitializationCubit(
-          serverAddress: 'chat.linloir.cn', 
+          serverAddress: '192.168.43.155', 
           serverPort: 20706
         );
       },

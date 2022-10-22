@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:44:03
- * @LastEditTime : 2022-10-18 14:45:20
+ * @LastEditTime : 2022-10-22 21:01:35
  * @Description  : Abstract TCP request class
  */
 
@@ -24,6 +24,7 @@ enum TCPRequestType {
   modifyProfile ('MODIFYPROFILE'),  //Modify user profile
   sendMessage   ('SENDMSG'),        //Send message
   fetchMessage  ('FETCHMSG'),       //Fetch message
+  ackFetch      ('ACKFETCH'),       //Acknowledge message fetch
   findFile      ('FINDFILE'),       //Find file by md5 before transmitting the file
   fetchFile     ('FETCHFILE'),      //Fetch file and file md5 by message md5
   searchUser    ('SEARCHUSR'),      //Search username and userid by username
@@ -243,4 +244,15 @@ class FetchContactRequest extends TCPRequest {
 
   @override
   Map<String, Object?> get body => {};
+}
+
+class AckFetchRequest extends TCPRequest {
+  final int _timeStamp;
+
+  const AckFetchRequest({required int timeStamp, required int? token}): _timeStamp = timeStamp, super(type: TCPRequestType.ackFetch, token: token);
+
+  @override
+  Map<String, Object?> get body => {
+    'timestamp': _timeStamp
+  };
 }

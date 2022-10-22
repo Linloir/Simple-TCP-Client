@@ -1,12 +1,15 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-21 22:47:38
+ * @LastEditTime : 2022-10-22 01:22:58
  * @Description  : Local Service Repository
  */
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +53,22 @@ class LocalServiceRepository {
       '''
         create table files (
           filemd5     text primary key,
+          dir         text not null
+        );
+      '''
+      );
+      await txn.execute(
+      '''
+        create table msgimgs (
+          msgmd5      text primary key,
+          imgmd5      text not null
+        );
+      '''
+      );
+      await txn.execute(
+      '''
+        create table imgs (
+          imgmd5      text primary key,
           dir         text not null
         );
       '''
@@ -105,11 +124,25 @@ class LocalServiceRepository {
   Future<void> storeMessages(List<Message> messages) async {
     await _database.transaction((txn) async {
       for(var message in messages) {
-        await txn.insert(
-          'msgs',
-          message.jsonObject,
-          conflictAlgorithm: ConflictAlgorithm.replace
-        );
+        if(message.type == MessageType.image) {
+          //store image first
+          storeImage(
+            image: base64.decode(message.contentDecoded), 
+            msgmd5: message.contentmd5
+          );
+          await txn.insert(
+            'msgs',
+            message.jsonObject..['content'] = "",
+            conflictAlgorithm: ConflictAlgorithm.replace
+          );
+        }
+        else {
+          await txn.insert(
+            'msgs',
+            message.jsonObject,
+            conflictAlgorithm: ConflictAlgorithm.replace
+          );
+        }
       }
     });
   }
@@ -135,6 +168,20 @@ class LocalServiceRepository {
     for(var rawMessage in rawMessages) {
       var message = Message.fromJSONObject(jsonObject: rawMessage);
       if(message.contentDecoded.toLowerCase().contains(pattern.toLowerCase())) {
+        //Since history page does not show message
+        //There is no need to fetch message here
+        // if(message.type == MessageType.image) {
+        //   var image = await fetchImage(msgmd5: message.contentmd5);
+        //   if(image != null) {
+        //     alikeMessages.add(message.copyWith(
+        //       content: base64.encode(image),
+        //     ));
+        //     continue;
+        //   }
+        //   else {
+        //     //TODO: do something
+        //   }
+        // }
         alikeMessages.add(message);
       }
     }
@@ -160,6 +207,8 @@ class LocalServiceRepository {
         messages.add([]);
       }
       else {
+        //Since message page does not show message
+        //There is no need to fetch message here
         messages.add([Message.fromJSONObject(jsonObject: queryResult[0])]);
       }
     }
@@ -185,7 +234,18 @@ class LocalServiceRepository {
       limit: num,
       offset: position
     );
-    return queryResult.map((e) => Message.fromJSONObject(jsonObject: e)).toList();
+    List<Message> messages = [];
+    for(var result in queryResult) {
+      var message = Message.fromJSONObject(jsonObject: result);
+      if(message.type == MessageType.image) {
+        var image = await fetchImage(msgmd5: message.contentmd5);
+        if(image != null) {
+          message = message.copyWith(content: base64.encode(image));
+        }
+      }
+      messages.add(message);
+    }
+    return messages;
   }
 
   Future<File?> findFile({required String filemd5, required String fileName}) async {
@@ -339,5 +399,60 @@ class LocalServiceRepository {
     else {
       return null;
     }
+  }
+
+  Future<void> storeImage({required List<int> image, required String msgmd5}) async {
+    var md5Output = AccumulatorSink<Digest>();
+    ByteConversionSink md5Input = md5.startChunkedConversion(md5Output);
+    md5Input.add(image);
+    md5Input.close();
+    var imagemd5 = md5Output.events.single.toString();
+    //Write to image library
+    var documentPath = (await getApplicationDocumentsDirectory()).path;
+    await Directory('$documentPath/LChatClient/imgs').create();
+    var permanentFilePath = '$documentPath/LChatClient/imgs/$imagemd5';
+    var imageFile = await File(permanentFilePath).create();
+    imageFile.writeAsBytes(image);
+    await _database.transaction((txn) async {
+      txn.insert(
+        'msgimgs',
+        {
+          'msgmd5': msgmd5,
+          'imgmd5': imagemd5
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace
+      );
+      txn.insert(
+        'imgs',
+        {
+          'imgmd5': imagemd5,
+          'dir': permanentFilePath
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace
+      );
+    });
+  }
+
+  Future<List<int>?> fetchImage({required String msgmd5}) async {
+    var imageQueryResult = await _database.query(
+      'msgimgs natural join imgs',
+      where: 'msgimgs.msgmd5 = ?',
+      whereArgs: [
+        msgmd5
+      ],
+      columns: [
+        'imgs.dir as dir'
+      ]
+    );
+    if(imageQueryResult.isEmpty) {
+      return null;
+    }
+    var path = imageQueryResult[0]['dir'] as String;
+    var image = File(path);
+    if(!await image.exists()) {
+      return null;
+    }
+    var imageContent = await image.readAsBytes();
+    return imageContent;
   }
 }

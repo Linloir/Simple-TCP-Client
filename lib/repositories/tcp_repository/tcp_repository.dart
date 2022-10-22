@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 09:42:05
- * @LastEditTime : 2022-10-19 10:41:43
+ * @LastEditTime : 2022-10-22 17:46:28
  * @Description  : TCP repository
  */
 
@@ -26,13 +26,25 @@ class TCPRepository {
     required int remotePort
   }): _socket = socket, _remoteAddress = remoteAddress, _remotePort = remotePort {
     Future(() async {
-      try{
-        await for(var response in _socket) {
-          _pullResponse(response);
-          await Future.delayed(const Duration(microseconds: 0));
+      while(true) {
+        try{
+          await for(var response in _socket!) {
+            _pullResponse(response);
+            await Future.delayed(const Duration(microseconds: 0));
+          }
+          break;
+        } catch(e) {
+          _socket?.close();
+          _socket = null;
+          while(true) {
+            try{
+              _socket = await Socket.connect(remoteAddress, remotePort);
+              break;
+            } catch (e) {
+              continue;
+            }
+          }
         }
-      } catch(e) {
-        _socket.close();
       }
       // _responseRawStreamController.close();
       // _payloadPullStreamController.close();
@@ -42,10 +54,40 @@ class TCPRepository {
     });
     //This future never ends, would that be bothersome?
     Future(() async {
-      await for(var request in _requestStreamController.stream) {
-        await _socket.addStream(request.stream);
+      TCPRequest? failedRequest;
+      while(true) {
+        try{
+          if(failedRequest != null) {
+            await Future.doWhile(() async {
+              await Future.delayed(const Duration(microseconds: 0));
+              return _socket == null;
+            });
+            await _socket!.addStream(failedRequest.stream);
+          }
+          await for(var request in _requestStreamController.stream) {
+            failedRequest = request;
+            await Future.doWhile(() async {
+              await Future.delayed(const Duration(microseconds: 0));
+              return _socket == null;
+            });
+            await _socket!.addStream(request.stream);
+            failedRequest = null;
+          }
+          break;
+        } catch (e) {
+          _socket?.close();
+          _socket = null;
+          while(true) {
+            try{
+              _socket = await Socket.connect(remoteAddress, remotePort);
+              break;
+            } catch (e) {
+              continue;
+            }
+          }
+        }
       }
-    }).onError((error, stackTrace) {_socket.close();});
+    });
     Future(() async {
       var responseQueue = StreamQueue(_responseRawStreamController.stream);
       var payloadQueue = StreamQueue(_payloadRawStreamController.stream);
@@ -56,14 +98,22 @@ class TCPRepository {
       }
       responseQueue.cancel();
       payloadQueue.cancel();
-    }).onError((error, stackTrace) {_socket.close();});
+    }).onError((error, stackTrace) {_socket?.close();});
   }
 
   static Future<TCPRepository> create({
     required String serverAddress,
     required int serverPort
   }) async {
-    var socket = await Socket.connect(serverAddress, serverPort);
+    Socket socket;
+    while(true) {
+      try{
+        socket = await Socket.connect(serverAddress, serverPort);
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
     return TCPRepository._internal(
       socket: socket, 
       remoteAddress: serverAddress, 
@@ -78,7 +128,7 @@ class TCPRepository {
     );
   }
 
-  final Socket _socket;
+  Socket? _socket;
   final String _remoteAddress;
   final int _remotePort;
 
@@ -359,7 +409,7 @@ class TCPRepository {
   }
 
   void dispose() async {
-    await _socket.flush();
-    await _socket.close();
+    await _socket?.flush();
+    await _socket?.close();
   }
 }

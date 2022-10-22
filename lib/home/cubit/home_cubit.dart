@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:02:28
- * @LastEditTime : 2022-10-21 23:31:43
+ * @LastEditTime : 2022-10-22 01:20:14
  * @Description  : 
  */
 
@@ -47,8 +47,8 @@ class HomeCubit extends Cubit<HomeState> {
       await for(var response in tcpRepository.responseStreamBroadcast) {
         if(response.type == TCPResponseType.fetchMessage) {
           if(response.status == TCPResponseStatus.ok) {
-            response as FetchMessageResponse;
-            localServiceRepository.storeMessages(response.messages);
+            // response as FetchMessageResponse;
+            // localServiceRepository.storeMessages(response.messages);
             break;
           }
         }

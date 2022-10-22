@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:02:28
- * @LastEditTime : 2022-10-22 01:20:14
+ * @LastEditTime : 2022-10-22 21:08:39
  * @Description  : 
  */
 
@@ -44,17 +44,15 @@ class HomeCubit extends Cubit<HomeState> {
       tcpRepository.pushRequest(FetchMessageRequest(
         token: (await SharedPreferences.getInstance()).getInt('token')
       ));
-      await for(var response in tcpRepository.responseStreamBroadcast) {
-        if(response.type == TCPResponseType.fetchMessage) {
-          if(response.status == TCPResponseStatus.ok) {
-            // response as FetchMessageResponse;
-            // localServiceRepository.storeMessages(response.messages);
-            break;
-          }
-        }
-      }
-    }).then((_) {
-      emit(state.copyWith(status: HomePageStatus.done));
+      // await for(var response in tcpRepository.responseStreamBroadcast) {
+      //   if(response.type == TCPResponseType.fetchMessage) {
+      //     if(response.status == TCPResponseStatus.ok) {
+      //       // response as FetchMessageResponse;
+      //       // localServiceRepository.storeMessages(response.messages);
+      //       break;
+      //     }
+      //   }
+      // }
     });
   }
 
@@ -71,19 +69,26 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  void _onTCPResponse(TCPResponse response) {
+  void _onTCPResponse(TCPResponse response) async {
     if(response.status == TCPResponseStatus.err) {
       return;
     }
     switch(response.type) {
       case TCPResponseType.forwardMessage: {
         response as ForwardMessageResponse;
-        localServiceRepository.storeMessages([response.message]);
+        await localServiceRepository.storeMessages([response.message]);
         break;
       }
       case TCPResponseType.fetchMessage: {
         response as FetchMessageResponse;
-        localServiceRepository.storeMessages(response.messages);
+        await localServiceRepository.storeMessages(response.messages);
+        emit(state.copyWith(status: HomePageStatus.done));
+        if(response.messages.isNotEmpty) {
+          tcpRepository.pushRequest(AckFetchRequest(
+            timeStamp: response.messages[0].timeStamp, 
+            token: (await SharedPreferences.getInstance()).getInt('token')
+          ));
+        }
         break;
       }
       default: {

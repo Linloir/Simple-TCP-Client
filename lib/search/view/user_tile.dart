@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:41:41
- * @LastEditTime : 2022-10-18 11:28:17
+ * @LastEditTime : 2022-10-23 10:30:24
  * @Description  : 
  */
 
@@ -35,8 +35,8 @@ class UserTile extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 36,
-          vertical: 16,
+          horizontal: 24,
+          vertical: 8,
         ),
         child: Row(
           children: [

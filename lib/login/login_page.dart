@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 15:06:30
- * @LastEditTime : 2022-10-20 20:55:07
+ * @LastEditTime : 2022-10-23 10:15:11
  * @Description  : 
  */
 
@@ -81,7 +81,7 @@ class LoginPage extends StatelessWidget {
                 Expanded(
                   flex: 6,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     child: const LoginPanel()
                   )
                 ),

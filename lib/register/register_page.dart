@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 17:36:38
- * @LastEditTime : 2022-10-20 20:55:17
+ * @LastEditTime : 2022-10-23 10:15:31
  * @Description  : 
  */
 /*
@@ -82,7 +82,7 @@ class RegisterPage extends StatelessWidget {
           listenWhen: (previous, current) => previous.status != current.status,
           child: Center(
             child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width * 0.7,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [

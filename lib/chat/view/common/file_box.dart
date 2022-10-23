@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:07:13
- * @LastEditTime : 2022-10-18 15:44:34
+ * @LastEditTime : 2022-10-22 23:31:19
  * @Description  : 
  */
 
@@ -35,7 +35,10 @@ class FileBox extends StatelessWidget {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 0.0,
+          vertical: 6.0
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -43,38 +46,38 @@ class FileBox extends StatelessWidget {
               child: history.status == ChatHistoryStatus.none || history.status == ChatHistoryStatus.done ? 
                 Icon(
                   Icons.file_present_rounded,
-                  size: 24,
+                  size: 20,
                   color: history.type == ChatHistoryType.income ? Colors.blue[800] : Colors.white.withOpacity(0.8),
                 ) : history.status == ChatHistoryStatus.failed ?
                 Icon(
                   Icons.refresh_rounded,
-                  size: 24,
+                  size: 20,
                   color: history.type == ChatHistoryType.income ? Colors.red[800] : Colors.white.withOpacity(0.8),
                 ) : history.status == ChatHistoryStatus.processing ? 
                 SizedBox(
-                  height: 18.0,
-                  width: 18.0,
+                  height: 16.0,
+                  width: 16.0,
                   child: LoadingIndicator(
                     indicatorType: Indicator.ballPulseSync,
                     colors: [Colors.white.withOpacity(0.8)],
                   ),
                 ) : 
                 SizedBox(
-                  height: 18.0,
-                  width: 18.0,
+                  height: 16.0,
+                  width: 16.0,
                   child: CircularProgressIndicator(
                     color: history.type == ChatHistoryType.income ? Colors.blue[800] : Colors.white.withOpacity(0.8),
-                    strokeWidth: 3,
+                    strokeWidth: 2.5,
                   ),
                 )
             ),
-            const SizedBox(width: 18.0,),
+            const SizedBox(width: 16.0,),
             Flexible(
               child: Text(
                 history.message.contentDecoded,
                 softWrap: true,
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 16.0,
                   color: history.type == ChatHistoryType.income ? Colors.grey[900] : Colors.white
                 ),
               ),

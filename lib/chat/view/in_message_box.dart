@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 13:49:47
- * @LastEditTime : 2022-10-20 13:56:20
+ * @LastEditTime : 2022-10-23 10:07:48
  * @Description  : 
  */
 
@@ -42,37 +42,37 @@ class InMessageBox extends StatelessWidget {
             ),
             boxShadow: [BoxShadow(blurRadius: 5.0, color: Colors.grey.withOpacity(0.3))]
           ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                topRight: Radius.circular(8.0),
-                bottomLeft: Radius.zero,
-                bottomRight: Radius.circular(8.0)
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if(history.message.type == MessageType.file)
-                  FileBox(history: history),
-                if(history.message.type == MessageType.image)
-                  ImageBox(history: history),
-                if(history.message.type == MessageType.plaintext)
-                  TextBox(history: history),
-                if(history.message.type != MessageType.image)
-                  ...[
-                    const SizedBox(height: 4.0,),
-                    Text(
-                      _getTimeStamp(history.message.timeStamp),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[400],
-                      ),
-                    )
-                  ]
-              ],
-            ),
-          )
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if(history.message.type == MessageType.file)
+                FileBox(history: history),
+              if(history.message.type == MessageType.image)
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8.0),
+                      topRight: Radius.circular(8.0),
+                      bottomLeft: Radius.zero,
+                      bottomRight: Radius.circular(8.0)
+                  ),
+                  child: ImageBox(history: history),
+                ),
+              if(history.message.type == MessageType.plaintext)
+                TextBox(history: history),
+              if(history.message.type != MessageType.image)
+                ...[
+                  const SizedBox(height: 4.0,),
+                  Text(
+                    _getTimeStamp(history.message.timeStamp),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[400],
+                    ),
+                  )
+                ]
+            ],
+          ),
         ),
         if(history.message.type == MessageType.image)
           ...[
@@ -96,9 +96,9 @@ class InMessageBox extends StatelessWidget {
     if(date.day == DateTime.now().day) {
       return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     }
-    //If date is yesterday, return 'yesterday'
+    //If date is yda, return 'yda'
     if(date.day == DateTime.now().day - 1) {
-      return 'yesterday ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+      return 'yda ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     }
     //If date is within this week, return the weekday in english
     if(date.weekday < DateTime.now().weekday) {

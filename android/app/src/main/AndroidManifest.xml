@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.tcp_client">
    <application
-        android:label="tcp_client"
+        android:label="LChatClient"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

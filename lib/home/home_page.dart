@@ -1,12 +1,13 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-21 23:56:24
+ * @LastEditTime : 2022-10-23 12:14:36
  * @Description  : 
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/cubit/home_cubit.dart';
 import 'package:tcp_client/home/cubit/home_state.dart';
 import 'package:tcp_client/home/view/contact_page/contact_page.dart';
@@ -15,6 +16,7 @@ import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
 import 'package:tcp_client/home/view/message_page/mesage_page.dart';
 import 'package:tcp_client/home/view/profile_page/profile_page.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
+import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';
 import 'package:tcp_client/repositories/user_repository/user_repository.dart';
 import 'package:tcp_client/search/search_page.dart';
@@ -107,6 +109,19 @@ class HomePageView extends StatelessWidget {
           },
         ),
         actions: [
+          BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              return state.page == HomePagePosition.contact ? 
+                IconButton(
+                  icon: const Icon(Icons.refresh_rounded),
+                  onPressed: () async {
+                    context.read<TCPRepository>().pushRequest(FetchContactRequest(
+                      token: (await SharedPreferences.getInstance()).getInt('token')
+                    ));
+                  },
+                ) : Container();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.search_rounded),
             onPressed: () {

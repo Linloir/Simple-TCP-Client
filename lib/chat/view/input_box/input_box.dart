@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:54:30
- * @LastEditTime : 2022-10-23 10:13:22
+ * @LastEditTime : 2022-10-23 13:03:12
  * @Description  : 
  */
 
@@ -67,6 +67,7 @@ class InputBox extends StatelessWidget {
                             onChanged: (value) {
                               context.read<MessageInputCubit>().onInputChange(MessageInput.dirty(value));
                             },
+                            focusNode: context.read<ChatCubit>().inputNode,
                             maxLines: null,
                             decoration: const InputDecoration(
                               border: UnderlineInputBorder(

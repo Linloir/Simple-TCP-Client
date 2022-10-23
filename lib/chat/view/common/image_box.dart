@@ -1,14 +1,16 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:20
- * @LastEditTime : 2022-10-23 11:35:10
+ * @LastEditTime : 2022-10-23 13:00:51
  * @Description  : 
  */
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:tcp_client/chat/cubit/chat_cubit.dart';
 import 'package:tcp_client/chat/model/chat_history.dart';
 
 class ImageBox extends StatelessWidget {
@@ -37,6 +39,7 @@ class ImageBox extends StatelessWidget {
                 child: InkWell(
                   splashColor: Colors.white.withOpacity(0.1),
                   onTap: (){
+                    context.read<ChatCubit>().unFocus();
                     var image = history.preCachedImage?.image ?? Image.memory(base64.decode(history.message.contentDecoded)).image;
                     Navigator.of(context).push(MaterialPageRoute(
                       builder:(context) {

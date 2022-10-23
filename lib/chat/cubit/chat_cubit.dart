@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-22 22:46:18
+ * @LastEditTime : 2022-10-23 13:07:08
  * @Description  : 
  */
 
@@ -38,8 +38,11 @@ class ChatCubit extends Cubit<ChatState> {
   late final StreamSubscription subscription;
   final Map<String, StreamSubscription> messageSendSubscriptionMap = {};
   final Map<String, StreamSubscription> fileFetchSubscriptionMap = {};
+  final FocusNode inputNode = FocusNode();
 
-  
+  void unFocus() {
+    inputNode.unfocus();
+  }
 
   Future<void> addMessage(Message message) async {
     var msg = message;

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-22 01:22:58
+ * @LastEditTime : 2022-10-23 13:49:23
  * @Description  : Local Service Repository
  */
 
@@ -270,18 +270,20 @@ class LocalServiceRepository {
         var documentPath = (await getApplicationDocumentsDirectory()).path;
         var fileBaseName = fileName.substring(0, fileName.lastIndexOf('.'));
         var fileExt = fileName.substring(fileName.lastIndexOf('.'));
-        var duplicate = 0;
+        // var duplicate = 0;
         //Rename target file
         await Directory('$documentPath/LChatClient/files').create();
         await Directory('$documentPath/LChatClient/files/$userID').create();
         var targetFilePath = '$documentPath/LChatClient/files/$userID/$fileBaseName$fileExt';
         var targetFile = File(targetFilePath);
-        while(await targetFile.exists()) {
-          duplicate += 1;
-          targetFilePath = '$documentPath/LChatClient/files/$userID/$fileBaseName($duplicate)$fileExt';
-          targetFile = File(targetFilePath);
+        // while(await targetFile.exists()) {
+        //   duplicate += 1;
+        //   targetFilePath = '$documentPath/LChatClient/files/$userID/$fileBaseName($duplicate)$fileExt';
+        //   targetFile = File(targetFilePath);
+        // }
+        if(!await targetFile.exists()) {
+          targetFile = await file.copy(targetFilePath);
         }
-        targetFile = await file.copy(targetFilePath);
         return targetFile;
       }
       else {

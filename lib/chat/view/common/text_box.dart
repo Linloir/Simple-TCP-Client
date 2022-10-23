@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:12
- * @LastEditTime : 2022-10-22 23:06:38
+ * @LastEditTime : 2022-10-23 10:49:14
  * @Description  : 
  */
 
@@ -67,7 +67,7 @@ class TextBox extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6.0,),
+                    const SizedBox(width: 8.0,),
                   ],
                 if(history.status == ChatHistoryStatus.done)
                   ...[

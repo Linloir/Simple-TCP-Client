@@ -223,11 +223,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: fbf68e4bb5cb3e262d8f8ebe10b2f8449ff8e030
-      url: "https://github.com/crazecoder/open_file"
+      ref: master
+      resolved-ref: "3715df103b68f5d684371376a399c8f8ed00e83d"
+      url: "https://github.com/linloir/open_file"
     source: git
-    version: "3.2.2"
+    version: "3.2.3"
   path:
     dependency: "direct main"
     description:

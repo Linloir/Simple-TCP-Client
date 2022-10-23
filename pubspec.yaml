@@ -45,7 +45,8 @@ dependencies:
   file_picker: ^5.2.1
   open_file:
     git:
-      url: https://github.com/crazecoder/open_file
+      url: https://github.com/linloir/open_file
+      ref: master
   shared_preferences: ^2.0.15
   loading_indicator: ^3.1.0
   async: ^2.9.0

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:07:13
- * @LastEditTime : 2022-10-22 23:31:19
+ * @LastEditTime : 2022-10-23 13:12:27
  * @Description  : 
  */
 
@@ -54,17 +54,23 @@ class FileBox extends StatelessWidget {
                   size: 20,
                   color: history.type == ChatHistoryType.income ? Colors.red[800] : Colors.white.withOpacity(0.8),
                 ) : history.status == ChatHistoryStatus.processing ? 
-                SizedBox(
+                Container(
                   height: 16.0,
-                  width: 16.0,
+                  width: 20.0,
+                  padding: const EdgeInsets.only(
+                    right: 4.0
+                  ),
                   child: LoadingIndicator(
                     indicatorType: Indicator.ballPulseSync,
                     colors: [Colors.white.withOpacity(0.8)],
                   ),
                 ) : 
-                SizedBox(
+                Container(
                   height: 16.0,
-                  width: 16.0,
+                  width: 20.0,
+                  padding: const EdgeInsets.only(
+                    right: 4.0
+                  ),
                   child: CircularProgressIndicator(
                     color: history.type == ChatHistoryType.income ? Colors.blue[800] : Colors.white.withOpacity(0.8),
                     strokeWidth: 2.5,

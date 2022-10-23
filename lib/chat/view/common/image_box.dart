@@ -1,18 +1,15 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:20
- * @LastEditTime : 2022-10-23 10:52:45
+ * @LastEditTime : 2022-10-23 11:35:10
  * @Description  : 
  */
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tcp_client/chat/cubit/chat_cubit.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:tcp_client/chat/model/chat_history.dart';
-import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 
 class ImageBox extends StatelessWidget {
   const ImageBox({
@@ -30,13 +27,55 @@ class ImageBox extends StatelessWidget {
           children: [
             Container(
               constraints: const BoxConstraints(maxWidth: 200, maxHeight: 150),
-              child: history.preCachedImage ?? Image.memory(base64Decode(history.message.contentDecoded)),
+              child: Hero(
+                tag: history.message.contentmd5,
+                child: history.preCachedImage ?? Image.memory(base64Decode(history.message.contentDecoded)),
+              ),
             ),
             Material(
                 color: Colors.transparent,
                 child: InkWell(
                   splashColor: Colors.white.withOpacity(0.1),
-                  onTap: (){},
+                  onTap: (){
+                    var image = history.preCachedImage?.image ?? Image.memory(base64.decode(history.message.contentDecoded)).image;
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder:(context) {
+                        return Scaffold(
+                          body: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: PhotoView(
+                                  heroAttributes: PhotoViewHeroAttributes(
+                                    tag: history.message.contentmd5
+                                  ),
+                                  imageProvider: image,
+                                  minScale: PhotoViewComputedScale.contained,
+                                )
+                              ),
+                              Positioned.fill(
+                                child: SafeArea(
+                                  child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.close_rounded,
+                                        shadows: [
+                                          Shadow(blurRadius: 8.0, color: Colors.white.withOpacity(0.5))
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ));
+                  },
                 )
               ),
           ]

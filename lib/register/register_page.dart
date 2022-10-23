@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 17:36:38
- * @LastEditTime : 2022-10-23 10:15:31
+ * @LastEditTime : 2022-10-23 22:12:12
  * @Description  : 
  */
 /*
@@ -13,6 +13,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:formz/formz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/home_page.dart';
@@ -26,19 +27,24 @@ class RegisterPage extends StatelessWidget {
   const RegisterPage({
     required this.localServiceRepository,
     required this.tcpRepository,
+    required this.localNotificationsPlugin,
     super.key
   });
 
   static Route<void> route({
     required LocalServiceRepository localServiceRepository,
-    required TCPRepository tcpRepository
+    required TCPRepository tcpRepository,
+    required FlutterLocalNotificationsPlugin localNotificationsPlugin,
   }) => MaterialPageRoute<void>(builder: (context) => RegisterPage(
     localServiceRepository: localServiceRepository,
-    tcpRepository: tcpRepository
+    tcpRepository: tcpRepository,
+    localNotificationsPlugin: localNotificationsPlugin,
+    
   ));
 
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
+  final FlutterLocalNotificationsPlugin localNotificationsPlugin;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +80,8 @@ class RegisterPage extends StatelessWidget {
                 Navigator.of(context).pushAndRemoveUntil(HomePage.route(
                   userID: userID,
                   localServiceRepository: localServiceRepository,
-                  tcpRepository: tcpRepository
+                  tcpRepository: tcpRepository,
+                  localNotificationsPlugin: localNotificationsPlugin
                 ), (route) => false);
               });
             }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-10 08:04:53
- * @LastEditTime : 2022-10-23 12:18:17
+ * @LastEditTime : 2022-10-23 22:26:44
  * @Description  : 
  */
 import 'package:flutter/gestures.dart';
@@ -13,8 +13,33 @@ import 'package:tcp_client/initialization/cubit/initialization_cubit.dart';
 import 'package:tcp_client/initialization/cubit/initialization_state.dart';
 import 'package:tcp_client/initialization/initialization_page.dart';
 import 'package:tcp_client/login/login_page.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = 
+  FlutterLocalNotificationsPlugin();
 
 void main() async {
+  // needed if you intend to initialize in the `main` function
+  WidgetsFlutterBinding.ensureInitialized();
+
+  const AndroidInitializationSettings initializationSettingsAndroid = 
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+  const  DarwinInitializationSettings initializationSettingsDarwin = 
+    DarwinInitializationSettings();
+  const  LinuxInitializationSettings initializationSettingsLinux = 
+    LinuxInitializationSettings(
+      defaultActionName: 'Open notification'
+    );
+  const InitializationSettings initializationSettings = 
+    InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
+      linux: initializationSettingsLinux
+    );
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings
+  );
   runApp(const MyApp());
 }
 
@@ -29,7 +54,7 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'LChatClient',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -49,7 +74,7 @@ class SplashPage extends StatelessWidget {
     return BlocProvider<InitializationCubit>(
       create: (context) {
         return InitializationCubit(
-          serverAddress: '127.0.0.1', 
+          serverAddress: 'chat.linloir.cn', 
           serverPort: 20706
         );
       },
@@ -65,13 +90,15 @@ class SplashPage extends StatelessWidget {
                 Navigator.of(context).pushReplacement(HomePage.route(
                   userID: userID,
                   localServiceRepository: state.localServiceRepository!,
-                  tcpRepository: state.tcpRepository!
+                  tcpRepository: state.tcpRepository!,
+                  localNotificationsPlugin: flutterLocalNotificationsPlugin
                 ));
               }
               else {
                 Navigator.of(context).pushReplacement(LoginPage.route(
                   localServiceRepository: state.localServiceRepository!,
-                  tcpRepository: state.tcpRepository!
+                  tcpRepository: state.tcpRepository!,
+                  localNotificationsPlugin: flutterLocalNotificationsPlugin
                 ));
               }
             });

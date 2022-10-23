@@ -1,12 +1,13 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:08
- * @LastEditTime : 2022-10-23 12:14:36
+ * @LastEditTime : 2022-10-23 22:37:02
  * @Description  : 
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/cubit/home_cubit.dart';
 import 'package:tcp_client/home/cubit/home_state.dart';
@@ -27,6 +28,7 @@ class HomePage extends StatelessWidget with WindowListener {
     required this.userID,
     required this.localServiceRepository,
     required this.tcpRepository,
+    required this.localNotificationsPlugin,
     super.key
   });
   //TODO: listen to file storage
@@ -34,15 +36,18 @@ class HomePage extends StatelessWidget with WindowListener {
   final int userID;
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
+  final FlutterLocalNotificationsPlugin localNotificationsPlugin;
 
   static Route<void> route({
     required int userID,
     required LocalServiceRepository localServiceRepository,
-    required TCPRepository tcpRepository
+    required TCPRepository tcpRepository,
+    required FlutterLocalNotificationsPlugin localNotificationsPlugin,
   }) => MaterialPageRoute<void>(builder: (context) => HomePage(
     userID: userID,
     localServiceRepository: localServiceRepository,
     tcpRepository: tcpRepository,
+    localNotificationsPlugin: localNotificationsPlugin,
   ));
 
   @override
@@ -76,7 +81,9 @@ class HomePage extends StatelessWidget with WindowListener {
             create: (context) => HomeCubit(
               localServiceRepository: localServiceRepository,
               tcpRepository: tcpRepository,
-              pageController: PageController()
+              pageController: PageController(),
+              localNotificationsPlugin: localNotificationsPlugin,
+              userRepository: context.read<UserRepository>()
             ),
           )
         ],

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:36:12
- * @LastEditTime : 2022-10-20 11:45:15
+ * @LastEditTime : 2022-10-23 22:10:44
  * @Description  : 
  */
 
@@ -57,7 +57,8 @@ class MyProfilePage extends StatelessWidget {
             Future.delayed(const Duration(seconds: 1)).then((_) {
               Navigator.of(context).pushAndRemoveUntil(LoginPage.route(
                 localServiceRepository: context.read<LocalServiceRepository>(), 
-                tcpRepository: context.read<TCPRepository>()
+                tcpRepository: context.read<TCPRepository>(),
+                localNotificationsPlugin: context.read<HomeCubit>().localNotificationsPlugin
               ), (route) => false);
             });
           }

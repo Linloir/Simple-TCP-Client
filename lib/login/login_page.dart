@@ -1,12 +1,13 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 15:06:30
- * @LastEditTime : 2022-10-23 10:15:11
+ * @LastEditTime : 2022-10-23 22:12:07
  * @Description  : 
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:formz/formz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tcp_client/home/home_page.dart';
@@ -21,19 +22,23 @@ class LoginPage extends StatelessWidget {
   const LoginPage({
     required this.localServiceRepository,
     required this.tcpRepository,
+    required this.localNotificationsPlugin,
     super.key
   });
 
   static Route<void> route({
     required LocalServiceRepository localServiceRepository,
-    required TCPRepository tcpRepository
+    required TCPRepository tcpRepository,
+    required FlutterLocalNotificationsPlugin localNotificationsPlugin,
   }) => MaterialPageRoute<void>(builder: (context) => LoginPage(
     localServiceRepository: localServiceRepository,
-    tcpRepository: tcpRepository
+    tcpRepository: tcpRepository,
+    localNotificationsPlugin: localNotificationsPlugin,
   ));
 
   final LocalServiceRepository localServiceRepository;
   final TCPRepository tcpRepository;
+  final FlutterLocalNotificationsPlugin localNotificationsPlugin;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +69,8 @@ class LoginPage extends StatelessWidget {
                 Navigator.of(context).pushReplacement(HomePage.route(
                   userID: userID,
                   localServiceRepository: localServiceRepository,
-                  tcpRepository: tcpRepository
+                  tcpRepository: tcpRepository,
+                  localNotificationsPlugin: localNotificationsPlugin
                 ));
               });
             }
@@ -96,7 +102,11 @@ class LoginPage extends StatelessWidget {
                         const Text('Does not have an account?'),
                         const SizedBox(width: 8,),
                         TextButton(
-                          onPressed: () => Navigator.of(context).push(RegisterPage.route(localServiceRepository: localServiceRepository, tcpRepository: tcpRepository)), 
+                          onPressed: () => Navigator.of(context).push(RegisterPage.route(
+                            localServiceRepository: localServiceRepository, 
+                            tcpRepository: tcpRepository,
+                            localNotificationsPlugin: localNotificationsPlugin
+                          )), 
                           style: ButtonStyle(
                             overlayColor: MaterialStateProperty.all(Colors.transparent),
                             foregroundColor: MaterialStateProperty.all(Colors.blue[800])

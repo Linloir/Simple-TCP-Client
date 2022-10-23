@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 10:56:02
- * @LastEditTime : 2022-10-23 13:49:23
+ * @LastEditTime : 2022-10-23 17:10:13
  * @Description  : Local Service Repository
  */
 
@@ -73,29 +73,38 @@ class LocalServiceRepository {
         );
       '''
       );
+      await txn.execute(
+        '''
+          create table readhistory (
+            userid    int not null,
+            targetid  int not null,
+            timestamp  int not null,
+            primary key (userid, targetid)
+          )
+        '''
+      );
     });
-    // await db.execute(
-    //   '''
-    //     create table msgs (
-    //       userid      integer not null,
-    //       targetid    integer not null,
-    //       contenttype text not null,
-    //       content     text not null,
-    //       timestamp   int not null,
-    //       md5encoded  text primary key,
-    //       filemd5     text
-    //     );
-    //     create table users (
-    //       userid    integer primary key,
-    //       username  text not null,
-    //       avatar    text
-    //     );
-    //     create table files (
-    //       filemd5     text primary key,
-    //       dir         text not null
-    //     );
-    //   '''
-    // );
+  }
+
+  static Future<void> _updateDatabaseToVer2(Database db) async {
+    await db.transaction((txn) async {
+      db.execute(
+        '''
+          create table readhistory (
+            userid      int not null,
+            targetid    int not null,
+            timestamp    int not null,
+            primary key (userid, targetid)
+          )
+        '''
+      );
+    });
+  }
+
+  static FutureOr<void> _onDatabaseUpgrade(Database db, int curVer, int newVer) async {
+    if(curVer == 1 && newVer == 2) {
+      await _updateDatabaseToVer2(db);
+    }
   }
 
   static Future<LocalServiceRepository> create({
@@ -104,8 +113,9 @@ class LocalServiceRepository {
   }) async {
     var database = await openDatabase(
       databaseFilePath,
-      version: 1,
-      onCreate: _onDatabaseCreate
+      version: 2,
+      onCreate: _onDatabaseCreate,
+      onUpgrade: _onDatabaseUpgrade,
     );
     return LocalServiceRepository._internal(database: database);
   }
@@ -456,5 +466,95 @@ class LocalServiceRepository {
     }
     var imageContent = await image.readAsBytes();
     return imageContent;
+  }
+
+  Future<void> setReadHistory({
+    required int userid,
+    required int targetid,
+    required int timestamp
+  }) async {
+    await _database.transaction((txn) async {
+      var result = await txn.query(
+        'readhistory',
+        where: 'userid = ? and targetid = ?',
+        whereArgs: [
+          userid,
+          targetid
+        ]
+      );
+      if(result.isEmpty) {
+        await txn.insert(
+          'readhistory',
+          {
+            'userid': userid,
+            'targetid': targetid,
+            'timestamp': timestamp
+          }
+        );
+        return;
+      }
+      if(result[0]['timestamp'] as int > timestamp) {
+        return;
+      }
+      await txn.update(
+        'readhistory',
+        {
+          'timestamp': timestamp
+        },
+        where: 'userid = ? and targetid = ?',
+        whereArgs: [
+          userid,
+          targetid
+        ]
+      );
+    });
+  }
+
+  Future<int> fetchReadHistory({
+    required int userid,
+    required int targetid
+  }) async {
+    return await _database.transaction<int>((txn) async {
+      var result = await txn.query(
+        'readhistory',
+        where: 'userid = ? and targetid = ?',
+        whereArgs: [
+          userid,
+          targetid,
+        ],
+      );
+      if(result.isEmpty) {
+        txn.insert(
+          'readhistory',
+          {
+            'userid': userid,
+            'targetid': targetid,
+            'timestamp': 0
+          },
+        );
+        return 0;
+      }
+      return result[0]['timestamp'] as int;
+    });
+  }
+
+  Future<int> getUnreadCount({
+    required int userid,
+    required int targetid
+  }) async {
+    return await _database.transaction<int>((txn) async {
+      var result = await txn.query(
+        'msgs left outer join readhistory on msgs.userid = readhistory.targetid and msgs.targetid = readhistory.userid',
+        columns: [
+          'msgs.md5encoded'
+        ],
+        where: 'msgs.userid = ? and msgs.targetid = ? and msgs.timestamp > readhistory.timestamp',
+        whereArgs: [
+          targetid,
+          userid
+        ]
+      );
+      return result.length;
+    });
   }
 }

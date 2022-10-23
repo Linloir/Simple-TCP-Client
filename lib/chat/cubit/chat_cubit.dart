@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:56
- * @LastEditTime : 2022-10-23 13:07:08
+ * @LastEditTime : 2022-10-23 17:22:46
  * @Description  : 
  */
 
@@ -209,6 +209,14 @@ class ChatCubit extends Cubit<ChatState> {
     if(response.type == TCPResponseType.forwardMessage) {
       response as ForwardMessageResponse;
       if(response.message.senderID == userID || response.message.recieverID == userID) {
+        if(response.message.senderID == userID) {
+          //Update read history
+          localServiceRepository.setReadHistory(
+            userid: response.message.recieverID, 
+            targetid: userID, 
+            timestamp: response.message.timeStamp
+          );
+        }
         // Message storage will be handled by home bloc listener
         //Emit new state
         var newHistory = ChatHistory(

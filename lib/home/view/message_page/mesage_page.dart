@@ -1,15 +1,15 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-11 11:05:18
- * @LastEditTime : 2022-10-17 13:35:35
+ * @LastEditTime : 2022-10-23 17:38:30
  * @Description  : 
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
-import 'package:tcp_client/home/view/message_page/cubit/msg_list_state.dart';
+import 'package:tcp_client/home/view/message_page/cubit/msg_list/msg_list_cubit.dart';
+import 'package:tcp_client/home/view/message_page/cubit/msg_list/msg_list_state.dart';
 import 'package:tcp_client/home/view/message_page/view/message_tile.dart';
 
 class MessagePage extends StatelessWidget {
@@ -31,6 +31,7 @@ class MessagePage extends StatelessWidget {
             physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             itemBuilder: (context, index) {
               return MessageTile(
+                key: ValueKey(state.messageList[index].targetUser),
                 userID: state.messageList[index].targetUser,
                 message: state.messageList[index].message,
               );

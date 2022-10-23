@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:48:54
- * @LastEditTime : 2022-10-18 11:25:36
+ * @LastEditTime : 2022-10-23 16:30:08
  * @Description  : 
  */
 
@@ -14,8 +14,19 @@ class MessageInfo extends Equatable {
 
   const MessageInfo({
     this.message,
-    required this.targetUser
+    required this.targetUser,
   });
+
+  MessageInfo copyWith({
+    Message? message,
+    int? targetUser,
+    int? unreadCount
+  }) {
+    return MessageInfo(
+      message: message ?? this.message,
+      targetUser: targetUser ?? this.targetUser,
+    );
+  }
 
   @override
   List<Object> get props => [message?.contentmd5 ?? '', targetUser];

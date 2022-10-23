@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 23:38:31
- * @LastEditTime : 2022-10-21 23:14:02
+ * @LastEditTime : 2022-10-23 16:30:24
  * @Description  : 
  */
 
@@ -9,7 +9,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tcp_client/home/view/message_page/cubit/msg_list_state.dart';
+import 'package:tcp_client/home/view/message_page/cubit/msg_list/msg_list_state.dart';
 import 'package:tcp_client/home/view/message_page/models/message_info.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';

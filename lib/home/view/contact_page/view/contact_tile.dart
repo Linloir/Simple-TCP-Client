@@ -16,7 +16,7 @@ import 'package:tcp_client/home/cubit/home_cubit.dart';
 import 'package:tcp_client/home/cubit/home_state.dart';
 import 'package:tcp_client/home/view/contact_page/cubit/contact_cubit.dart';
 import 'package:tcp_client/home/view/contact_page/models/contact_model.dart';
-import 'package:tcp_client/home/view/message_page/cubit/msg_list/msg_list_cubit.dart';
+import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';
 import 'package:tcp_client/repositories/tcp_repository/models/tcp_request.dart';
 import 'package:tcp_client/repositories/tcp_repository/tcp_repository.dart';

@@ -12,7 +12,7 @@ import 'package:tcp_client/home/cubit/home_cubit.dart';
 import 'package:tcp_client/home/cubit/home_state.dart';
 import 'package:tcp_client/home/view/contact_page/contact_page.dart';
 import 'package:tcp_client/home/view/contact_page/cubit/contact_cubit.dart';
-import 'package:tcp_client/home/view/message_page/cubit/msg_list/msg_list_cubit.dart';
+import 'package:tcp_client/home/view/message_page/cubit/msg_list_cubit.dart';
 import 'package:tcp_client/home/view/message_page/mesage_page.dart';
 import 'package:tcp_client/home/view/profile_page/profile_page.dart';
 import 'package:tcp_client/repositories/local_service_repository/local_service_repository.dart';

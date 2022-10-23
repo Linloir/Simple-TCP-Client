@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:16
- * @LastEditTime : 2022-10-20 10:52:30
+ * @LastEditTime : 2022-10-22 21:30:04
  * @Description  : 
  */
 
@@ -88,7 +88,7 @@ class ChatPage extends StatelessWidget {
                           //Return history tile
                           return Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
+                              horizontal: 16,
                               vertical: 8
                             ),
                             child: HistoryTile(

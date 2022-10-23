@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:20
- * @LastEditTime : 2022-10-20 13:47:29
+ * @LastEditTime : 2022-10-22 23:05:24
  * @Description  : 
  */
 
@@ -25,7 +25,7 @@ class ImageBox extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              constraints: const BoxConstraints(maxWidth: 500, maxHeight: 200),
+              constraints: const BoxConstraints(maxWidth: 200, maxHeight: 150),
               child: history.preCachedImage ?? Image.memory(base64Decode(history.message.contentDecoded)),
             ),
             Material(

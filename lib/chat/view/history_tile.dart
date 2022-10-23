@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 14:03:45
- * @LastEditTime : 2022-10-15 10:52:30
+ * @LastEditTime : 2022-10-22 21:30:26
  * @Description  : 
  */
 
@@ -34,7 +34,7 @@ class HistoryTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  UserAvatar(userid: history.message.senderID),
+                  UserAvatar(userid: history.message.senderID, size: 42,),
                   const SizedBox(width: 16.0,),
                   Flexible(
                     child: InMessageBox(history: history)
@@ -58,7 +58,7 @@ class HistoryTile extends StatelessWidget {
                     child: OutMessageBox(history: history),
                   ),
                   const SizedBox(width: 16.0,),
-                  UserAvatar(userid: history.message.senderID),
+                  UserAvatar(userid: history.message.senderID, size: 42,),
                 ],
               )
             ),

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-12 16:29:25
- * @LastEditTime : 2022-10-20 20:54:22
+ * @LastEditTime : 2022-10-23 10:28:12
  * @Description  : 
  */
 
@@ -44,6 +44,11 @@ class UsernameInput extends StatelessWidget {
           onChanged: (username) {
             context.read<RegisterCubit>().onUsernameChange(Username.dirty(username));
           },
+          textInputAction: TextInputAction.next,
+          textCapitalization: TextCapitalization.none,
+          autocorrect: false,
+          enableIMEPersonalizedLearning: false,
+          enableSuggestions: false,
           decoration: InputDecoration(
             labelText: 'Username',
             errorText: state.username.invalid ? 'Invalid username' : null
@@ -60,12 +65,21 @@ class PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterCubit, RegisterState>(
-      buildWhen: (previous, current) => previous.password != current.password,
+      buildWhen: (previous, current) => previous.password != current.password || previous.status != current.status,
       builder: (context, state) {
         return TextField(
           onChanged: (password) {
             context.read<RegisterCubit>().onPasswordChange(Password.dirty(password));
           },
+          onEditingComplete: () {
+            if(
+              state.status == FormzStatus.valid || 
+              state.status == FormzStatus.submissionFailure
+            ) {
+              context.read<RegisterCubit>().onSubmission();
+            }
+          },
+          textInputAction: TextInputAction.done,
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'Password',

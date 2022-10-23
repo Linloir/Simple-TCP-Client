@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:54:30
- * @LastEditTime : 2022-10-20 11:18:48
+ * @LastEditTime : 2022-10-23 10:13:22
  * @Description  : 
  */
 
@@ -34,7 +34,12 @@ class InputBox extends StatelessWidget {
       ),
       child: Container(
         // height: 64,
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        padding: const EdgeInsets.only(
+          left: 16.0, 
+          right: 4.0,
+          top: 16.0,
+          bottom: 16.0
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -79,7 +84,6 @@ class InputBox extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8.0,),
             IconButton(
               onPressed: () {
                 var chatCubit = context.read<ChatCubit>();
@@ -98,7 +102,6 @@ class InputBox extends StatelessWidget {
               }, 
               icon: Icon(Icons.attach_file_rounded, color: Colors.grey[700],)
             ),
-            const SizedBox(width: 8.0,),
             IconButton(
               onPressed: () {
                 var chatCubit = context.read<ChatCubit>();
@@ -116,7 +119,6 @@ class InputBox extends StatelessWidget {
               }, 
               icon: Icon(Icons.photo_rounded, color: Colors.grey[700],)
             ),
-            const SizedBox(width: 8.0,),
             BlocBuilder<MessageInputCubit, MessageInputState>(
               builder:(context, state) {
                 return IconButton(

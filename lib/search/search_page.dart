@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 17:04:12
- * @LastEditTime : 2022-10-14 10:38:44
+ * @LastEditTime : 2022-10-23 10:30:41
  * @Description  : 
  */
 
@@ -61,7 +61,7 @@ class SearchPage extends StatelessWidget {
                       const SizedBox(height: 16.0,),
                       const Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 36.0,
+                          horizontal: 24.0,
                           vertical: 8.0
                         ),
                         child: Text(
@@ -80,7 +80,7 @@ class SearchPage extends StatelessWidget {
                       const SizedBox(height: 16.0,),
                       const Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 36.0,
+                          horizontal: 24.0,
                           vertical: 8.0
                         ),
                         child: Text(
@@ -102,7 +102,7 @@ class SearchPage extends StatelessWidget {
                       const SizedBox(height: 16.0,),
                       const Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 36.0,
+                          horizontal: 24.0,
                           vertical: 8.0
                         ),
                         child: Text(

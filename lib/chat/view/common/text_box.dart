@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-14 17:04:12
- * @LastEditTime : 2022-10-15 10:53:28
+ * @LastEditTime : 2022-10-22 23:06:38
  * @Description  : 
  */
 
@@ -25,7 +25,10 @@ class TextBox extends StatelessWidget {
     return InkWell(
       onTap: (){},
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 0.0,
+          vertical: 6.0
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -35,14 +38,14 @@ class TextBox extends StatelessWidget {
                 if(history.status == ChatHistoryStatus.sending)
                   ...[
                     SizedBox(
-                      height: 15.0,
-                      width: 15.0,
+                      height: 12.0,
+                      width: 12.0,
                       child: CircularProgressIndicator(
                         color: Colors.white.withOpacity(0.5),
                         strokeWidth: 2.0,
                       ),
                     ),
-                    const SizedBox(width: 16.0,),
+                    const SizedBox(width: 12.0,),
                   ],
                 if(history.status == ChatHistoryStatus.failed)
                   ...[
@@ -53,7 +56,7 @@ class TextBox extends StatelessWidget {
                           child: Icon(
                             Icons.error_rounded,
                             color: Colors.white.withOpacity(0.5),
-                            size: 20,
+                            size: 18,
                           ),
                           onTap: () async {
                             context.read<ChatCubit>().tcpRepository.pushRequest(SendMessageRequest(
@@ -64,16 +67,16 @@ class TextBox extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8.0,),
+                    const SizedBox(width: 6.0,),
                   ],
                 if(history.status == ChatHistoryStatus.done)
                   ...[
                     Icon(
                       Icons.check_rounded,
                       color: Colors.white.withOpacity(0.5),
-                      size: 20,
+                      size: 18,
                     ),
-                    const SizedBox(width: 12.0,),
+                    const SizedBox(width: 8.0,),
                   ],
               ],
               Flexible(
@@ -81,7 +84,7 @@ class TextBox extends StatelessWidget {
                   history.message.contentDecoded,
                   softWrap: true,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     color: history.type == ChatHistoryType.income ? Colors.grey[900] : Colors.white
                   ),
                 ),

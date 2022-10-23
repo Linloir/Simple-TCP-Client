@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 13:17:52
- * @LastEditTime : 2022-10-20 00:52:14
+ * @LastEditTime : 2022-10-23 10:09:09
  * @Description  : 
  */
 
@@ -150,9 +150,9 @@ class MessageTile extends StatelessWidget {
     if(date.day == DateTime.now().day) {
       return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     }
-    //If date is yesterday, return 'yesterday'
+    //If date is yda, return 'yda'
     if(date.day == DateTime.now().day - 1) {
-      return 'yesterday';
+      return 'yda ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     }
     //If date is within this week, return the weekday in english
     if(date.weekday < DateTime.now().weekday) {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 21:41:49
- * @LastEditTime : 2022-10-17 22:23:46
+ * @LastEditTime : 2022-10-23 10:30:06
  * @Description  : 
  */
 
@@ -24,8 +24,8 @@ class HistoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 36.0
+        vertical: 8.0,
+        horizontal: 24.0
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -87,9 +87,9 @@ class HistoryTile extends StatelessWidget {
     if(date.day == DateTime.now().day) {
       return '${date.hour}:${date.minute}';
     }
-    //If date is yesterday, return 'yesterday'
+    //If date is yda, return 'yda'
     if(date.day == DateTime.now().day - 1) {
-      return 'yesterday';
+      return 'yda ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     }
     //If date is within this week, return the weekday in english
     if(date.weekday < DateTime.now().weekday) {

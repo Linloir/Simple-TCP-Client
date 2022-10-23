@@ -1,7 +1,7 @@
 /*
  * @Author       : Linloir
  * @Date         : 2022-10-13 20:18:14
- * @LastEditTime : 2022-10-20 11:50:26
+ * @LastEditTime : 2022-10-23 12:06:33
  * @Description  : Repository to cache user info
  */
 
@@ -45,6 +45,36 @@ class UserRepository {
       users.update(response.userInfo!.userID, (value) => response.userInfo!, ifAbsent: () => response.userInfo!);
       _userInfoStreamController.add(response.userInfo!);
       localServiceRepository.storeUserInfo(userInfo: response.userInfo!);
+    }
+    else if(response.type == TCPResponseType.fetchContact && response.status == TCPResponseStatus.ok) {
+      response as FetchContactResponse;
+      for(var user in response.addedContacts) {
+        users.update(
+          user.userID, 
+          (value) => user,
+          ifAbsent: () => user
+        );
+        localServiceRepository.storeUserInfo(userInfo: user);
+        _userInfoStreamController.add(user);
+      }
+      for(var user in response.pendingContacts) {
+        users.update(
+          user.userID, 
+          (value) => user,
+          ifAbsent: () => user
+        );
+        localServiceRepository.storeUserInfo(userInfo: user);
+        _userInfoStreamController.add(user);
+      }
+      for(var user in response.requestingContacts) {
+        users.update(
+          user.userID, 
+          (value) => user,
+          ifAbsent: () => user
+        );
+        localServiceRepository.storeUserInfo(userInfo: user);
+        _userInfoStreamController.add(user);
+      }
     }
   }
 
